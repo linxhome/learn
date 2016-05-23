@@ -1,0 +1,13 @@
+#Android存储的小结
+
+   开发Android原生app的同学或多或少都会遇到存储问题，因为Android本身就是一台小型的计算机，所以它的存储也跟传统的计算机结构一样，具有多层结构：从速度最快，容量最小的寄存器到容量最大，速度最慢的外部存储。 
+  因为Android本身安全性的要求，开发原生app的同学大多数的时候谈到的存储都是外部存储 。 在android中，主要的外部存储被分成了三个部分，
+   一个是最简单的SharePreference，可以直接存储 boolean , float ,int ,long,String 这些基础变量的封装类,使用起来简便快捷。实际上，SharedPreferences 将数据文件写在了手机内存私有的目录中该app的文件夹下。可以通过DDMS的【File Explorer】找到data\data\程序包名\shared_prefs目录（如果使用真机测试，必须保存已root，否则因为权限问题无法进入data目录），存储格式是一个xml文件，如下图，
+
+``` xml
+ <!--   test.xml   -->
+  <?xml version='1.0' encoding='utf-8' standalone='yes'>
+  <map>
+       <string name="name">小明</string>
+</map>
+```
