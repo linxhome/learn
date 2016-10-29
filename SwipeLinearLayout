@@ -1,0 +1,93 @@
+package com.example.android.apprestrictionenforcer.secondview;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+
+/**
+ * Created by daijun on 2016/10/29.
+ * function is
+ */
+public class SwipeLinearLayout extends LinearLayout {
+
+    boolean isIntercept = false;
+    public SwipeLinearLayout(Context context) {
+        super(context);
+    }
+
+    public SwipeLinearLayout(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public SwipeLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    float yLastModify = 0;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float y = event.getRawY();
+        ListView list = (ListView)getChildAt(0);
+        ImageView imageview = (ImageView) getChildAt(1);
+        if(event.getAction() == MotionEvent.ACTION_UP) {
+            yLastModify = 0;
+
+            //todo set zero smooth
+            list.setTranslationY(0);
+            imageview.setTranslationY(0);
+
+            return isIntercept;
+        }
+
+        if(yLastModify == 0) {
+            yLastModify = y;
+            return isIntercept;
+        }
+
+        float distance = y - yLastModify;
+
+        if(distance > 0 && list.getTranslationY() > 0) {
+            isIntercept = false;
+        } else {
+            float acc = Math.abs(imageview.getTranslationY()) == 0 ? 1:1 - Math.abs(imageview.getTranslationY())/1000;
+            acc = distance > 0 ? 1 : acc;
+            float drag_dis = distance * acc ;
+            imageview.setTranslationY(imageview.getTranslationY()+drag_dis);
+            list.setTranslationY(list.getTranslationY()+drag_dis);
+        }
+
+        yLastModify = y;
+        return isIntercept;
+    }
+
+    float lastY;
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        ListView list = (ListView)getChildAt(0);
+        switch(ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                lastY = ev.getRawY();
+                isIntercept = false;
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                float dis = ev.getRawY() - lastY;
+                if(list.getLastVisiblePosition() == list.getAdapter().getCount() -1 && dis < 0 ) {
+                    isIntercept = true;
+                } else {
+                    isIntercept = false;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                yLastModify = 0f;
+                isIntercept = false;
+            default:
+                break;
+        }
+        return isIntercept;
+    }
+}
