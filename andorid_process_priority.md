@@ -60,23 +60,55 @@
 符合下面三个条件中的任一条件都会被系统认定为可见进程
 
  - 对用户可见，但又不在前台的activity（调用了onPause），比如前台的activity是透明的或者使用dialog启动了一个新的activity
- - 进程中的service调用了startForeground方法
  - 进程中运行着一个对当前使用者比较重要的service服务，比如动态墙纸或者输入法相关的service
  
  可见进程相比前台进程等级要低了一些，但对系统运行也是相当重要的，所以通常来说，如果不是为了保障前台进程正常运行所必须的话，通常不会轻易的回收它们。
  
 #### 3.  服务进程
  
- 顾名思义，服务进程中运行着一个service，并且已运行了startService。 正常情况下，系统只有在前台进程和可见进程内存吃紧的时候才会Kill服务进程。启动service的onStartCommmand命令返回的参数能控制service的被kill掉之后的行为
+ 顾名思义，服务进程中运行着一个service，并且已经调用了startService方法。 正常情况下，系统只有在前台进程和可见进程内存吃紧的时候才会Kill服务进程。启动service的onStartCommmand命令返回的参数能控制service的被kill掉之后的行为
   - START_STICKY : 表示希望系统可用的时候重启该服务
-  - START_REDELIVER_INTENT ： 被系统kill之后重启时，重新获得上一次的intent，直到你用startid调用了stopSelf
+  - START_REDELIVER_INTENT ： 被系统kill之后重启时，重新获得上一次的intent
   - START_NOT_STICKY ：表示被kill也没关系
  
- Service运行一定时间后会自动降级（通常是30min或更久)，降级并缓存到一个LRU的列表中。这样在一定程序上避免了一些有内存泄漏或者因为某些错误占用了大量内存的service长时间运行，浪费了系统资源。
+ Service运行一定时间后会自动降级（通常是30min或更久)，降级并缓存到一个LRU的列表中。这样在一定程序上避免了一些有内存泄漏或者因为某些错误占用了大量内存的service长时间运行，浪费系统资源。
  
 #### 4. 后台和空进程(Cached Process)
 
-在最新的En文档中，已经没有后台进程和空进程的说法，取而代之的是一个被称之为Cache Process的进程等级，从描述来讲，Cached Process应该是后台进程和空进程的综合体，
- 
+在最新的En文档中，已经没有后台进程和空进程的说法，取而代之的是一个被称之为Cache Process的进程等级，从描述来讲，Cached Process应该是后台进程和空进程的综合体。Cached Process的特点是当前任务不需要，系统在内存不足时随时可能会被kill掉。通常在一个系统中，会存在多个Cached Process，只有极端情况下，所有的Cache Process都被杀死，系统内存仍然不够时，才会考虑Kill掉服务进程。
 
+最常见的情况是，一个对用户不可见的Activity(比如已调用了OnStop方法)所在的进程就属于Cached Prcess。为了不影响用户体验，当它们被系统杀死后，用户想再次回到之前的App，能在新的进程里启动Activity并恢复之前已经保存的数据。
+
+所有的Cached Process都会被保存在一个伪-LRU列表中，通常尾端的进程会被第一个被kill掉。至于其它的Kill规则，通常与平台实现相关，基本原则还是保证跟用户直接相关的进程最后被Kill。
+
+####Tips
+
+要明确的一点是，进程的等级所指的对象是进程，而通常对App来说，一个进程中可能运行着多种组件（Activity,Service)，所以当我们将通过其中一个组件提升了进程等级，那也就意味着这个进程内的其它组件也相应受到影响。如果对这些组件的运行等级有不同的要求，强烈建议把它们分到不同的进程中，让消耗大的进程能被及时回收。所以让组件运行在合适的优先级是一件需要慎重考虑的事情，有所取舍而不是一股脑将所有的进程设置为前台进程。
+
+
+### 小结
+ 
+知道了进程等级的分类，我们再来看看组件的生命周期内，进程的等级是如何变化的。
+
+#### 1. Activity 
+首先看一张从Api Doc扒出来的Activity的生命周期图
+
+![MacDown Screenshot](https://developer.android.com/images/activity_lifecycle.png)
+
+从图中可以看到
+
+- Activity启动执行onResume，进程等级会变成前台进程
+- 执行onPause之后，但仍然可见，进程等级处于可见进程 
+- Activity执行onStop之后，会进入Cached进程
+
+
+#### 2. Service
+
+ - 运行在onCreate,onStartCommand,onDestory这几个方法时，Service所在进程是前台进程
+ - 如果service被绑定以其它组件上，那么它的进程运行等级就不会低于这些组件
+ - 可以通过startForeFround方法将Service的进程运行等级提升到前台进程
+ 
+ 
+综上所述，对于Activity来说，它的运行等级是跟生命周期相关，而对于Service来说，它是可以通过bind或者startForeground方法来提升它的运行等级。而提升运行等级的作用更多的是保证重要的业务不会被随时Kill掉，从而提高App的体验和运行效率。当然，它还涉及到另外一个争议比较大的话题，那就是进程的保活。
+ 
 
