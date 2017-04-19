@@ -1,4 +1,4 @@
-##Android 进程等级
+## Android 进程等级
 
 >Android官方文档对于进程等级有比较详细的[说明](https://developer.android.com/guide/topics/processes/process-lifecycle.html)了。
 
