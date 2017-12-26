@@ -11,8 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.service.ForeService;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,12 +29,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mListView = (ListView) findViewById(R.id.listview);
 
-        final Map<String,Class> activitySet = new HashMap<>();
+        final Map<String,Class> activitySet = new LinkedHashMap<>();
         activitySet.put("Layout Params",SecondActivity.class);
         activitySet.put("Constrains Layout",ThirdActivity.class);
         activitySet.put("DataBinding",DataBindingActivity.class);
         activitySet.put("Storage File",FourActivity.class);
         activitySet.put("Dialog Problem",DialogActivity.class);
+        activitySet.put("Start Service", ForeService.class);
 
         int size = activitySet.keySet().size();
         final String[] titles = activitySet.keySet().toArray(new String[size]);
@@ -51,10 +53,13 @@ public class MainActivity extends Activity {
                 }
                 Intent intent = new Intent();
                 intent.setClass(getBaseContext(),activitySet.get(titles[position]));
-                startActivity(intent);
+                String className = activitySet.get(titles[position]).getName();
+                if(className.contains("Service")) {
+                    startService(intent);
+                } else {
+                    startActivity(intent);
+                }
             }
         });
     }
-
-
 }
