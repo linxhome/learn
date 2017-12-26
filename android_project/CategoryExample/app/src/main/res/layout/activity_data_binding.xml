@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="data"
+            type="com.example.dai.categoryexample.binding.DataBindingVM" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{data.textContent,default=`default value`}"
+            android:visibility="@{data.isTextVisible ? View.VISIBLE : View.GONE}" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{data::OnClick}"
+            android:text="click to set value"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="click to post choreographer"
+            android:onClick="@{data::OnPostChoregrapher}"
+            />
+
+    </LinearLayout>
+</layout>

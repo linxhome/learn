@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.example.dai.categoryexample"
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    signingConfigs {
+        debug {
+            v2SigningEnabled false
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+    dexOptions {
+        preDexLibraries false
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "com.android.support.constraint:constraint-layout:1.0.2"
+}
+

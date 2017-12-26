@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyViewStyle">
+        <attr name="text" format="string" />
+        <attr name="android:text" />
+        <attr name="view_size" format="dimension" />
+    </declare-styleable>
+    <attr name="text_view_attr" format="reference|color" />
+</resources>
