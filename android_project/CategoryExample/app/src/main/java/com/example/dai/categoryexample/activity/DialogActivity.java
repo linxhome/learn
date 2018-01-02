@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -34,6 +36,28 @@ public class DialogActivity extends Activity {
             }
         });
 
+
+        //dialog leak window problem
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        final AlertDialog dialog2 = builder1.setTitle("will leak").setMessage("try to destroy the activity").create();
+        View button2 = findViewById(R.id.create_button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog2.show();
+                postDelayDestroy();
+            }
+        });
+    }
+
+    private void postDelayDestroy() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DialogActivity.this.finish();
+            }
+        },3000);
     }
 
     class Task extends AsyncTask<Integer, Integer, String> {

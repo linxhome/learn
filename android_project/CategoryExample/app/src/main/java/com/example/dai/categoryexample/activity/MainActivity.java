@@ -30,12 +30,13 @@ public class MainActivity extends Activity {
         mListView = (ListView) findViewById(R.id.listview);
 
         final Map<String,Class> activitySet = new LinkedHashMap<>();
-        activitySet.put("Layout Params",SecondActivity.class);
-        activitySet.put("Constrains Layout",ThirdActivity.class);
+        activitySet.put("Layout Params",ParamsActivity.class);
+        activitySet.put("Constrains Layout",ConstraintActivity.class);
         activitySet.put("DataBinding",DataBindingActivity.class);
-        activitySet.put("Storage File",FourActivity.class);
+        activitySet.put("Storage File",StorageActivity.class);
         activitySet.put("Dialog Problem",DialogActivity.class);
         activitySet.put("Start Service", ForeService.class);
+        activitySet.put("Permission",PermissionActivity.class);
 
         int size = activitySet.keySet().size();
         final String[] titles = activitySet.keySet().toArray(new String[size]);

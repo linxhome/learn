@@ -15,14 +15,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.SecondActivity" />
-        <activity android:name=".activity.ThirdActivity" />
         <activity android:name=".activity.DataBindingActivity" />
-        <activity android:name=".activity.FourActivity" />
+        <activity android:name=".activity.StorageActivity" />
         <activity android:name=".activity.DialogActivity" />
+        <activity android:name=".activity.ConstraintActivity" />
+        <activity android:name=".activity.PermissionActivity" />
+
 
         <service
             android:name=".service.ForeService"/>
     </application>
+
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
 
 </manifest>

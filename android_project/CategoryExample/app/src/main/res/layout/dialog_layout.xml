@@ -5,7 +5,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/dialog_button"
-        android:text="新建Dialog"
+        android:text="Dialog Dismiss"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:id="@+id/create_button2"
+        android:text="Dialog Leak"
         />
 
 
