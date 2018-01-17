@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CategoryExample</string>
     <string name="ll_text">LL text</string>
+    <string name="title_activity_recycler">RecyclerView</string>
 </resources>

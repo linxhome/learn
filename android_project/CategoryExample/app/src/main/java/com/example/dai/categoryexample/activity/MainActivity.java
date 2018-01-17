@@ -3,7 +3,9 @@ package com.example.dai.categoryexample.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -29,14 +31,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mListView = (ListView) findViewById(R.id.listview);
 
-        final Map<String,Class> activitySet = new LinkedHashMap<>();
-        activitySet.put("Layout Params",ParamsActivity.class);
-        activitySet.put("Constrains Layout",ConstraintActivity.class);
-        activitySet.put("DataBinding",DataBindingActivity.class);
-        activitySet.put("Storage File",StorageActivity.class);
-        activitySet.put("Dialog Problem",DialogActivity.class);
+        final Map<String, Class> activitySet = new LinkedHashMap<>();
+        activitySet.put("Layout Params", ParamsActivity.class);
+        activitySet.put("Constrains Layout", ConstraintActivity.class);
+        activitySet.put("DataBinding", DataBindingActivity.class);
+        activitySet.put("Storage File", StorageActivity.class);
+        activitySet.put("Dialog Problem", DialogActivity.class);
         activitySet.put("Start Service", ForeService.class);
-        activitySet.put("Permission",PermissionActivity.class);
+        activitySet.put("Permission", PermissionActivity.class);
+        activitySet.put("FragmentManager", FragmentManagerActivity.class);
+
+        mListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Window window = getWindow();
+                Log.e("windowstag","window is null " + (window == null));
+            }
+        }, 8000);
 
         int size = activitySet.keySet().size();
         final String[] titles = activitySet.keySet().toArray(new String[size]);
@@ -53,9 +64,9 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "got " + txtStr, Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent();
-                intent.setClass(getBaseContext(),activitySet.get(titles[position]));
+                intent.setClass(getBaseContext(), activitySet.get(titles[position]));
                 String className = activitySet.get(titles[position]).getName();
-                if(className.contains("Service")) {
+                if (className.contains("Service")) {
                     startService(intent);
                 } else {
                     startActivity(intent);

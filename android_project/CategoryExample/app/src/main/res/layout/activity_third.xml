@@ -27,7 +27,6 @@
             custom:layout_constraintLeft_toLeftOf="parent"
             custom:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="20dp"
@@ -44,19 +43,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="61dp"
             android:text="A"
-            custom:layout_constraintRight_toLeftOf="@+id/textView3"
-            custom:layout_constraintTop_toTopOf="@+id/guideline3"
+            custom:layout_constraintHorizontal_chainStyle="spread"
             custom:layout_constraintLeft_toLeftOf="parent"
-            custom:layout_constraintHorizontal_chainStyle="spread" />
+            custom:layout_constraintRight_toLeftOf="@+id/textView3"
+            custom:layout_constraintTop_toTopOf="@+id/guideline3" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="B"
-            custom:layout_constraintTop_toTopOf="@+id/textView2"
+            custom:layout_constraintLeft_toRightOf="@+id/textView2"
             custom:layout_constraintRight_toLeftOf="@+id/textView4"
-            custom:layout_constraintLeft_toRightOf="@+id/textView2" />
+            custom:layout_constraintTop_toTopOf="@+id/textView2" />
 
         <TextView
             android:id="@+id/textView4"
@@ -64,8 +63,8 @@
             android:layout_height="wrap_content"
             android:text="C"
             custom:layout_constraintLeft_toRightOf="@+id/textView3"
-            custom:layout_constraintTop_toTopOf="@+id/textView3"
-            custom:layout_constraintRight_toRightOf="parent" />
+            custom:layout_constraintRight_toRightOf="parent"
+            custom:layout_constraintTop_toTopOf="@+id/textView3" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
@@ -73,16 +72,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             custom:layout_constraintGuide_end="50dp"
-            tools:layout_editor_absoluteY="510dp"
-            tools:layout_editor_absoluteX="0dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="3333"
-            custom:layout_constraintLeft_toLeftOf="parent"
-            custom:layout_constraintTop_toTopOf="@+id/guideline" />
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="510dp" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline3"
@@ -90,8 +81,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             custom:layout_constraintGuide_begin="139dp"
-            tools:layout_editor_absoluteY="164dp"
-            tools:layout_editor_absoluteX="0dp" />
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="164dp" />
+
+        <TextView
+            android:id="@+id/gone_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="400dp"
+            android:text="gone_layout"
+            android:visibility="gone"
+            custom:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="gone_layout_after"
+            custom:layout_constraintLeft_toRightOf="@id/gone_layout"
+            custom:layout_goneMarginLeft="3dp" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>
