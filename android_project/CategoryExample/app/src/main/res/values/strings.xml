@@ -2,4 +2,10 @@
     <string name="app_name">CategoryExample</string>
     <string name="ll_text">LL text</string>
     <string name="title_activity_recycler">RecyclerView</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="set_visible_btn">change_child_visible</string>
+    <string name="set_parent_gone">set_parent_visible</string>
+    <string name="child_text_tips">child text with a linear layout parent</string>
 </resources>

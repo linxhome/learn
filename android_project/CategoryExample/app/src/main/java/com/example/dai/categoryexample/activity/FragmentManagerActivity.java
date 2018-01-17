@@ -1,19 +1,118 @@
 package com.example.dai.categoryexample.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.fragment.VisibleGoneFragment;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
- * Created by dai
- * on 18/1/11.
+ * A fragment representing a list of Items.
+ * interface.
  */
-
 public class FragmentManagerActivity extends FragmentActivity {
 
+    private RecyclerView mRecyclerView;
+    private MyAdapter mAdapter;
+    private HashMap<String, Fragment> mFragmentMap = new HashMap<>();
+
+    public FragmentManagerActivity() {
+    }
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_item_list);
+        setTitle("FragmentManager");
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mAdapter = new MyAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //增加页面的位置
+        add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
+    }
+
+
+    private void add(String fragmentName, Fragment fragmentClass) {
+        mFragmentMap.put(fragmentName, fragmentClass);
+        mAdapter.addData(fragmentName);
+    }
+
+    class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+        List<String> mData = new ArrayList<>();
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.fragment_item, parent, false);
+            TextView idText = (TextView) view.findViewById(R.id.item_id);
+            TextView contentText = (TextView) view.findViewById(R.id.item_content);
+            return new ViewHolder(idText, contentText, view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            String name = mData.get(position);
+            holder.mContentView.setText(name);
+            holder.mTextView.setText(position + 1 + ":");
+
+            holder.mContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                    String name = mData.get(position);
+                    Fragment fragment = mFragmentMap.get(name);
+                    if (fragment != null || !fragment.isAdded()) {
+                        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.add(android.R.id.content, fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    } else {
+                        Log.i("FragmentManagerActivity", name + "is null");
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return mData.size();
+        }
+
+        void addData(String name) {
+            mData.add(name);
+        }
+    }
+
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        View mContainer;
+        TextView mTextView;
+        TextView mContentView;
+
+        ViewHolder(TextView textView, TextView contentView, View container) {
+            super(container);
+            mTextView = textView;
+            mContentView = contentView;
+            mContainer = contentView;
+        }
     }
 
 
