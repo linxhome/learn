@@ -40,4 +40,11 @@
         android:layout_height="wrap_content"
         android:text="result" />
 
+    <Button
+        android:id="@+id/test_receiver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test oreo receiver"
+        />
+
 </LinearLayout>

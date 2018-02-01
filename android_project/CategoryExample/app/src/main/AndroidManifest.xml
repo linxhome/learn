@@ -33,6 +33,12 @@
         <activity
             android:name=".activity.RecyclerActivity"
             android:label="@string/title_activity_recycler" />
+
+        <receiver android:name=".receiver.OreoReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.test.oreo"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

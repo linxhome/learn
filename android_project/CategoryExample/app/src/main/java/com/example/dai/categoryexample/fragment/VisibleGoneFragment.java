@@ -1,6 +1,7 @@
 package com.example.dai.categoryexample.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -72,6 +73,15 @@ public class VisibleGoneFragment extends Fragment {
                     child.setVisibility(View.GONE);
                 }
                 showResult(parent, child);
+            }
+        });
+
+        getView().findViewById(R.id.test_receiver).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.test.oreo");
+                getActivity().sendBroadcast(intent);
             }
         });
     }
