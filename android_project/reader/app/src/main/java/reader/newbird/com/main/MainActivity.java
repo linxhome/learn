@@ -1,4 +1,4 @@
-package reader.newbird.com.global.main;
+package reader.newbird.com.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,14 +7,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import reader.newbird.com.global.R;
-import reader.newbird.com.global.bookshelf.BookFragment;
-import reader.newbird.com.global.personal.PersonalFragment;
-import reader.newbird.com.global.recommand.RecommandFragment;
+import reader.newbird.com.R;
+import reader.newbird.com.bookshelf.ShelfFragment;
+import reader.newbird.com.personal.PersonalFragment;
+import reader.newbird.com.recommand.RecommendFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
+    private TopFragmentAdapter mAdapter;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -39,22 +40,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        mViewPager = findViewById(R.id.main_view_pager);
-        mAdapter  = new TopFragmentAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.main_view_pager);
+        mAdapter = new TopFragmentAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         createFragment();
+
     }
 
-    TopFragmentAdapter mAdapter;
     private void createFragment() {
-        mAdapter.addFragment(new RecommandFragment());
-        mAdapter.addFragment(new BookFragment());
-        mAdapter.addFragment(new PersonalFragment());
+        mAdapter.addFragment(RecommendFragment.newInstance());
+        mAdapter.addFragment(ShelfFragment.newInstance());
+        mAdapter.addFragment(PersonalFragment.newInstance());
         mAdapter.notifyDataSetChanged();
     }
 

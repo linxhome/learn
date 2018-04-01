@@ -36,6 +36,8 @@ public class DialogActivity extends Activity {
             }
         });
 
+        dialog.dismiss();
+
 
         //dialog leak window problem
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);

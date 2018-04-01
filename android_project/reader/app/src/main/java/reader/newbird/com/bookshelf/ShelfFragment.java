@@ -1,4 +1,4 @@
-package reader.newbird.com.global.bookshelf;
+package reader.newbird.com.bookshelf;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,40 +7,26 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import reader.newbird.com.global.R;
-import reader.newbird.com.global.bookshelf.dummy.DummyContent;
-import reader.newbird.com.global.bookshelf.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import reader.newbird.com.R;
+import reader.newbird.com.bookshelf.dummy.BookDetail;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
  * interface.
  */
-public class BookFragment extends Fragment {
+public class ShelfFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public BookFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static BookFragment newInstance(int columnCount) {
-        BookFragment fragment = new BookFragment();
+    public static ShelfFragment newInstance() {
+        ShelfFragment fragment = new ShelfFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,10 +34,8 @@ public class BookFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+        setHasOptionsMenu(true);
+        mColumnCount = 3;
     }
 
     @Override
@@ -68,11 +52,16 @@ public class BookFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyBookRecyclerViewAdapter(DummyContent.ITEMS));
+            recyclerView.setAdapter(new BookShelfRecyclerAdapter(BookDetail.ITEMS));
         }
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.common_action_bar,menu);
+    }
 
     @Override
     public void onAttach(Context context) {

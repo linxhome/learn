@@ -40,6 +40,7 @@ public class MainActivity extends Activity {
         activitySet.put("Start Service", ForeService.class);
         activitySet.put("Permission", PermissionActivity.class);
         activitySet.put("FragmentManager", FragmentManagerActivity.class);
+        activitySet.put("Empty Page", EmptyActivity.class);
 
         mListView.postDelayed(new Runnable() {
             @Override
@@ -55,6 +56,8 @@ public class MainActivity extends Activity {
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
         mListView.setAdapter(adapter);
 
+        getSharedPreferences("x",MODE_PRIVATE);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -65,6 +68,7 @@ public class MainActivity extends Activity {
                 }
                 Intent intent = new Intent();
                 intent.setClass(getBaseContext(), activitySet.get(titles[position]));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
                 String className = activitySet.get(titles[position]).getName();
                 if (className.contains("Service")) {
                     startService(intent);

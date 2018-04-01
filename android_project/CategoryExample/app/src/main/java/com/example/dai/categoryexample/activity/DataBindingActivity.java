@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.MessageQueue;
 import android.util.Log;
 
 import com.example.dai.categoryexample.R;
@@ -39,6 +40,16 @@ public class DataBindingActivity extends Activity {
             @Override
             public void run() {
 
+            }
+        });
+
+        Log.e("bad ", "onCreate: ", new Throwable());
+
+        Looper.myQueue().addIdleHandler(new MessageQueue.IdleHandler() {
+            @Override
+            public boolean queueIdle() {
+                //do something
+                return false;
             }
         });
     }

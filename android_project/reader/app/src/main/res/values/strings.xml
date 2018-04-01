@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ReadBird</string>
+    <string name="app_name">快读</string>
     <string name="title_home">发现</string>
     <string name="title_dashboard">书架</string>
     <string name="title_notifications">我的</string>

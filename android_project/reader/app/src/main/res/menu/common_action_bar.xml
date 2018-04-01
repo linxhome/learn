@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/book_shelf_action_bar"
+        android:title="@string/title_dashboard" />
+</menu>
