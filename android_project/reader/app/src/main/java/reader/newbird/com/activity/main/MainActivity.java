@@ -1,4 +1,4 @@
-package reader.newbird.com.main;
+package reader.newbird.com.activity.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import reader.newbird.com.R;
-import reader.newbird.com.bookshelf.ShelfFragment;
-import reader.newbird.com.personal.PersonalFragment;
-import reader.newbird.com.recommand.RecommendFragment;
+import reader.newbird.com.activity.bookshelf.ShelfFragment;
+import reader.newbird.com.activity.personal.PersonalFragment;
+import reader.newbird.com.activity.recommand.RecommendFragment;
 
 public class MainActivity extends AppCompatActivity {
 

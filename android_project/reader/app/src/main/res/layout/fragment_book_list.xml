@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:context="reader.newbird.com.bookshelf.ShelfFragment"
-    tools:listitem="@layout/fragment_book" />
+    tools:context=".activity.bookshelf.ShelfFragment"
+    tools:listitem="@layout/item_fragment_book" />

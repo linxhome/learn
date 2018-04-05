@@ -1,4 +1,4 @@
-package reader.newbird.com.main;
+package reader.newbird.com.activity.main;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

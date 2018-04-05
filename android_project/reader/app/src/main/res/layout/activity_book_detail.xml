@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cover_container"
+        android:layout_width="match_parent"
+        android:layout_height="130dp">
+
+        <ImageView
+            android:id="@+id/cover_image"
+            android:layout_width="90dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="10dp"
+            tools:src="@drawable/cover_icon" />
+
+        <TextView
+            android:id="@+id/book_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_toRightOf="@id/cover_image"
+            android:textSize="@dimen/book_name_font_size"
+            tools:text="这是书名" />
+
+        <TextView
+            android:id="@+id/author_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/book_name"
+            android:layout_below="@id/book_name"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/dim_grey"
+            android:textSize="@dimen/book_name_font_size"
+            tools:text="作者" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/book_intro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textColor="@color/dim_grey"
+        android:textSize="@dimen/book_name_font_size"
+        tools:text="简介" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/chapter_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" />
+
+</LinearLayout>

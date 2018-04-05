@@ -1,4 +1,4 @@
-package reader.newbird.com.personal;
+package reader.newbird.com.activity.personal;
 
 import android.content.Context;
 import android.os.Bundle;

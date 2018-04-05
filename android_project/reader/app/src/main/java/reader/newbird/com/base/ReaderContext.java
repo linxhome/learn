@@ -23,6 +23,7 @@ public class ReaderContext {
 
     public void init(Context context) {
         mContext = context;
+        InitConfig.initDir(context);
     }
 
     public Context get() {

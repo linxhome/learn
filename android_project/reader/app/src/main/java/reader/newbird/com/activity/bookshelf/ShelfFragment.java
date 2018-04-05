@@ -1,4 +1,4 @@
-package reader.newbird.com.bookshelf;
+package reader.newbird.com.activity.bookshelf;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,22 +12,29 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import reader.newbird.com.R;
-import reader.newbird.com.bookshelf.dummy.BookDetail;
+import reader.newbird.com.book.BookModel;
+import reader.newbird.com.book.BookPresenter;
+import reader.newbird.com.book.IGetBook;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
  * interface.
  */
-public class ShelfFragment extends Fragment {
+public class ShelfFragment extends Fragment implements IGetBook {
 
     private int mColumnCount = 1;
+    private BookPresenter mBookPresenter;
+    private BookShelfRecyclerAdapter mDataAdapter;
 
     public static ShelfFragment newInstance() {
         ShelfFragment fragment = new ShelfFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        fragment.mBookPresenter = new BookPresenter(fragment);
         return fragment;
     }
 
@@ -52,7 +59,8 @@ public class ShelfFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new BookShelfRecyclerAdapter(BookDetail.ITEMS));
+            mDataAdapter = new BookShelfRecyclerAdapter(getActivity());
+            recyclerView.setAdapter(mDataAdapter);
         }
         return view;
     }
@@ -60,18 +68,36 @@ public class ShelfFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.common_action_bar,menu);
+        inflater.inflate(R.menu.common_action_bar, menu);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    public void onStart() {
+        super.onStart();
+        mBookPresenter.getBook();
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void updateBook(BookModel data) {
+        mDataAdapter.addItem(data);
+        mDataAdapter.notifyAppend();
     }
 
+    @Override
+    public void updateBooks(List<BookModel> data) {
+        if (data != null) {
+            for (BookModel book : data) {
+                mDataAdapter.addItem(book);
+                mDataAdapter.notifyAppend();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(mBookPresenter != null) {
+            mBookPresenter.destroy();
+        }
+    }
 }

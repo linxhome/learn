@@ -1,4 +1,4 @@
-package reader.newbird.com.recommand;
+package reader.newbird.com.activity.recommand;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import reader.newbird.com.R;
-import reader.newbird.com.base.thread.ThreadManager;
+import reader.newbird.com.base.ThreadManager;
 
 /**
  * A fragment representing a list of Items.
