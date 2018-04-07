@@ -59,6 +59,10 @@ public class BookFileManager {
         return books;
     }
 
+    public AssetsFileAsyncTask initAssetBook(IGetBook listener) {
+        return new AssetsFileAsyncTask(listener);
+    }
+
     private static BookModel getBook(String path) {
         File bookDir = new File(path);
         File[] files = bookDir.listFiles();
@@ -88,10 +92,6 @@ public class BookFileManager {
             }
         }
         return bookModel;
-    }
-
-    public AssetsFileAsyncTask initAssetBook(IGetBook listener) {
-        return new AssetsFileAsyncTask(listener);
     }
 
     static class AssetsFileAsyncTask extends AsyncTask<String, String, Boolean> {
