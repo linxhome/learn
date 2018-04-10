@@ -1,10 +1,10 @@
 package reader.newbird.com.chapter;
 
-import java.io.File;
+import com.newbird.parse.model.PageModel;
 
 import reader.newbird.com.book.BookModel;
 
-public class ChapterPresenter {
+public class ChapterPresenter implements IGetChapter {
     private BookModel mBookInfo;
     private IGetChapter mChapterPageView;
 
@@ -22,17 +22,18 @@ public class ChapterPresenter {
         if (seq > mBookInfo.chapterSeqs.size()) {
             return;
         }
-        String chapterPath = mBookInfo.bookDir + File.separator + mBookInfo.chapterSeqs.get(seq);
-        ChapterFileManager.parseChapter(chapterPath);
-
-
+        ChapterFileManager.parseBaseChapterInfo(mBookInfo, seq, this);
     }
 
-    public void getPageBitmap(ChapterPageModel pageData) {
-
-    }
-
+    /**
+     * 获得分页后的分页列表
+     * @param chapterInfo
+     */
     public void getPages(ChapterModel chapterInfo) {
+
+    }
+
+    public void getPageBitmap(PageModel pageData) {
 
     }
 
@@ -41,4 +42,10 @@ public class ChapterPresenter {
     }
 
 
+    @Override
+    public void onGetChapterInfo(ChapterModel chapterInfo) {
+        if (mChapterPageView != null) {
+            mChapterPageView.onGetChapterInfo(chapterInfo);
+        }
+    }
 }
