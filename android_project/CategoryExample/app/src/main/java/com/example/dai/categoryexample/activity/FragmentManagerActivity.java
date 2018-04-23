@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.NotifyItemFragment;
+import com.example.dai.categoryexample.fragment.NotifycationFragment;
 import com.example.dai.categoryexample.fragment.VisibleGoneFragment;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         //增加页面的位置
         add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
         add("Recycler View Test", NotifyItemFragment.newInstance(1));
-
+        add("Notifycation Problem",new NotifycationFragment());
     }
 
 

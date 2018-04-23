@@ -1,7 +1,9 @@
 package com.example.dai.categoryexample.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,7 +48,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 Window window = getWindow();
-                Log.e("windowstag","window is null " + (window == null));
+                Log.e("windowstag", "window is null " + (window == null));
             }
         }, 8000);
 
@@ -56,7 +58,7 @@ public class MainActivity extends Activity {
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, titles);
         mListView.setAdapter(adapter);
 
-        getSharedPreferences("x",MODE_PRIVATE);
+        getSharedPreferences("x", MODE_PRIVATE);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,7 +77,24 @@ public class MainActivity extends Activity {
                 } else {
                     startActivity(intent);
                 }
+                myPackageName();
             }
         });
+
+
+    }
+
+    @SuppressLint("NewApi")
+    private void myPackageName() {
+        PackageManager packageManager = getPackageManager();
+        CharSequence appLabel = getApplication().getApplicationInfo().loadLabel(packageManager);
+
+        String name1 = getPackageName();
+        String name2 = getApplication().getPackageName();
+        String name3 = appLabel.toString();
+
+        Log.e("packagename", name1 + "-" + name2 + "-" + name3);
+
+
     }
 }
