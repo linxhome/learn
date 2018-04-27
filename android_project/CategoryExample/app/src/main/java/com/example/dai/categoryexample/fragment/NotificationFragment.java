@@ -11,13 +11,16 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.activity.DialogActivity;
 import com.example.dai.categoryexample.activity.EmptyActivity;
+import com.example.dai.categoryexample.receiver.OreoReceiver;
 
 /**
  * Created by dai on 2018/4/23.
@@ -49,7 +52,6 @@ public class NotificationFragment extends Fragment implements View.OnClickListen
         mButton5.setOnClickListener(this);
 
 
-
         mhandler = new Handler(Looper.getMainLooper());
         return root;
     }
@@ -59,40 +61,105 @@ public class NotificationFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn1:
+                sendNotifycation();
                 break;
             case R.id.btn2:
+                updateNotification();
                 break;
             case R.id.btn3:
+                normalActivity();
                 break;
             case R.id.btn4:
+                specialActivity();
                 break;
             case R.id.btn5:
-                createNotification();
+                changeIntent();
                 break;
             default:
                 break;
         }
     }
 
+    NotificationCompat.Builder builder;
+    NotificationManager notificationManager;
+    int notifyId = 1;
+
 
     private void createNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity())
+        builder = new NotificationCompat.Builder(getActivity())
                 .setSmallIcon(R.drawable.navbar_ic_set)
                 .setContentTitle("ContentTitle")
                 .setContentText("Content Text is here");
+
         Intent intent = new Intent(getActivity(), EmptyActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        /*TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getActivity());
-        taskStackBuilder.addParentStack(EmptyActivity.class);
-        taskStackBuilder.addNextIntent(intent);
-        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-*/
-        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent boardIntent = new Intent(getActivity(), OreoReceiver.class);
+        PendingIntent cancelIntent = PendingIntent.getBroadcast(getActivity(), 0, boardIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
         builder.setContentIntent(pendingIntent);
-        NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(11, builder.build());
+        builder.setDeleteIntent(cancelIntent);
+        builder.setAutoCancel(true);
+        builder.setSubText("sub text");
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    private void sendNotifycation() {
+        createNotification();
+        notificationManager.notify(notifyId++, builder.build());
+    }
+
+    private void updateNotification() {
+        createNotification();
+        //builder.setNumber(10);
+        builder.setContentText("update a content");
+        notificationManager.notify(notifyId, builder.build()); // notifyId唯一表示了一个通知项，可以通过id来更新或者cancel一个通知消息
+    }
+
+    private void changeIntent() {
+        Intent intent = new Intent(getActivity(), DialogActivity.class);
+        PendingIntent content = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(content);
+    }
+
+    /**
+     * notification 常规activity，启动全新任务,并提供应用的返回栈，返回栈定义在parent activity中
+     */
+    private void normalActivity() {
+        Intent result = new Intent(getActivity(), EmptyActivity.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getActivity());
+        stackBuilder.addParentStack(EmptyActivity.class);
+        stackBuilder.addNextIntent(result);
+
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_CANCEL_CURRENT);
+        builder = new NotificationCompat.Builder(getActivity())
+                .setSmallIcon(R.drawable.navbar_ic_set)
+                .setContentTitle("normal activity")
+                .setContentText("start normal activity")
+                .setContentIntent(pendingIntent);
+
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notifyId, builder.build());
+    }
 
 
+    /**
+     * 独立的task栈
+     */
+    private void specialActivity() {
+        Intent intent = new Intent(getActivity(), DialogActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder = new NotificationCompat.Builder(getActivity())
+                .setSmallIcon(R.drawable.navbar_ic_set)
+                .setContentTitle("normal activity")
+                .setContentText("start normal activity");
+        builder.setContentIntent(pendingIntent);
+
+        notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notifyId,builder.build());
     }
 
 

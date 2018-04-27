@@ -34,14 +34,13 @@ public class MainActivity extends Activity {
         mListView = (ListView) findViewById(R.id.listview);
 
         final Map<String, Class> activitySet = new LinkedHashMap<>();
-        activitySet.put("Layout Params", ParamsActivity.class);
+        activitySet.put("FragmentManager", FragmentManagerActivity.class);
         activitySet.put("Constrains Layout", ConstraintActivity.class);
         activitySet.put("DataBinding", DataBindingActivity.class);
         activitySet.put("Storage File", StorageActivity.class);
         activitySet.put("Dialog Problem", DialogActivity.class);
         activitySet.put("Start Service", ForeService.class);
         activitySet.put("Permission", PermissionActivity.class);
-        activitySet.put("FragmentManager", FragmentManagerActivity.class);
         activitySet.put("Empty Page", EmptyActivity.class);
 
         mListView.postDelayed(new Runnable() {
@@ -70,7 +69,7 @@ public class MainActivity extends Activity {
                 }
                 Intent intent = new Intent();
                 intent.setClass(getBaseContext(), activitySet.get(titles[position]));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
                 String className = activitySet.get(titles[position]).getName();
                 if (className.contains("Service")) {
                     startService(intent);
@@ -97,4 +96,6 @@ public class MainActivity extends Activity {
 
 
     }
+
+
 }

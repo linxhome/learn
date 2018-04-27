@@ -22,11 +22,17 @@
         </activity>
         <activity android:name=".activity.DataBindingActivity" />
         <activity android:name=".activity.StorageActivity" />
-        <activity android:name=".activity.DialogActivity" />
         <activity android:name=".activity.ConstraintActivity" />
         <activity android:name=".activity.PermissionActivity" />
-        <activity android:name=".activity.ParamsActivity" />
         <activity android:name=".activity.FragmentManagerActivity" />
+        <activity
+            android:name=".activity.EmptyActivity"
+            android:parentActivityName=".activity.MainActivity">
+        </activity>
+
+        <activity android:name=".activity.DialogActivity"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"/>
 
         <service android:name=".service.ForeService" />
 
@@ -40,7 +46,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.EmptyActivity"></activity>
+
     </application>
 
 </manifest>

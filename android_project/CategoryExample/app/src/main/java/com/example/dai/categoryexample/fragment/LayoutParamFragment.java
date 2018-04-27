@@ -1,9 +1,12 @@
-package com.example.dai.categoryexample.activity;
+package com.example.dai.categoryexample.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,27 +16,28 @@ import android.widget.Toast;
 import com.example.dai.categoryexample.R;
 
 /**
- * Created by dai
- * on 18/1/2.
+ * Created by dai on 2018/4/25.
+ * Comment:
  */
+public class LayoutParamFragment extends Fragment {
 
-public class ParamsActivity extends Activity {
     private LinearLayout mLinearLayout;
     private RelativeLayout mRelativeLayout;
+    private View mRoot;
     private TextView mTextViewLl, mTextViewRl;
-    private Button mBtnLL,mBtnRl;
+    private Button mBtnLL, mBtnRl;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        mRoot = inflater.inflate(R.layout.activity_second, container, false);
 
-        mLinearLayout = (LinearLayout) findViewById(R.id.linear_layout);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relative_layout);
-        mTextViewLl = (TextView) findViewById(R.id.ll_textview);
-        mTextViewRl = (TextView) findViewById(R.id.rl_textview);
-        mBtnLL = (Button) findViewById(R.id.linear_layout_btn);
-        mBtnRl = (Button) findViewById(R.id.relative_layout_btn);
+        mLinearLayout = (LinearLayout) mRoot.findViewById(R.id.linear_layout);
+        mRelativeLayout = (RelativeLayout) mRoot.findViewById(R.id.relative_layout);
+        mTextViewLl = (TextView) mRoot.findViewById(R.id.ll_textview);
+        mTextViewRl = (TextView) mRoot.findViewById(R.id.rl_textview);
+        mBtnLL = (Button) mRoot.findViewById(R.id.linear_layout_btn);
+        mBtnRl = (Button) mRoot.findViewById(R.id.relative_layout_btn);
 
         mBtnLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +52,7 @@ public class ParamsActivity extends Activity {
                 testRelativeLayoutParams();
             }
         });
-
+        return mRoot;
     }
 
     private String singleLine = "sldfjdlsk 1123123123";
@@ -56,10 +60,10 @@ public class ParamsActivity extends Activity {
     private String threeLine = twoLine + twoLine;
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        final TextView textview = (TextView) findViewById(R.id.multi_line_text);
-        final TextView showInfo = (TextView) findViewById(R.id.show_info);
+        final TextView textview = (TextView) mRoot.findViewById(R.id.multi_line_text);
+        final TextView showInfo = (TextView) mRoot.findViewById(R.id.show_info);
 
         //test the post runnable to get the line number
         textview.setMaxLines(2);
@@ -80,7 +84,7 @@ public class ParamsActivity extends Activity {
     private void testLinearLayoutParams() {
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mTextViewLl.getLayoutParams();
         String output = layoutParams.debug("otestLinearLayoutParamsutput");
-        Toast.makeText(this, output, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), output, Toast.LENGTH_SHORT).show();
 
         layoutParams.gravity = Gravity.BOTTOM;
         layoutParams.leftMargin = 20;
@@ -96,5 +100,4 @@ public class ParamsActivity extends Activity {
         layoutParams.addRule(RelativeLayout.END_OF, R.id.rl_sample_textview);
         mTextViewRl.setLayoutParams(layoutParams);
     }
-
 }

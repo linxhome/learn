@@ -78,6 +78,12 @@
             android:text="ll_sample xxxxxxxxxxxxx" />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/red_num_back"
+        android:text="1" />
+
 
     <TextView
         android:id="@+id/multi_line_text"
@@ -104,6 +110,8 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
+
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="0dp"
@@ -117,9 +125,6 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
-
-
-
 
 
 </LinearLayout>
