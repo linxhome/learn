@@ -1,5 +1,6 @@
 package reader.newbird.com.activity.main;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);g
+        getWindowManager().getDefaultDisplay().getSize(new Point());
         setContentView(R.layout.activity_main);
 
         mViewPager = (ViewPager) findViewById(R.id.main_view_pager);

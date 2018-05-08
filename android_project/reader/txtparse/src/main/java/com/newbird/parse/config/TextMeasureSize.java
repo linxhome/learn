@@ -1,6 +1,6 @@
 package com.newbird.parse.config;
 
-public class TextSize {
+public class TextMeasureSize {
     public int height;
     public int width;
 

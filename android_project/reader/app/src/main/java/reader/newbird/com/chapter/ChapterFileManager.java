@@ -3,6 +3,8 @@ package reader.newbird.com.chapter;
 import android.os.AsyncTask;
 
 
+import com.newbird.parse.model.NBPage;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -61,7 +63,7 @@ public class ChapterFileManager {
             }
         }
 
-        public List<PageModel> parseChapterToList(ChapterModel chapterInfo) {
+        public List<NBPage> parseChapterToList(ChapterModel chapterInfo) {
             //todo parseChapterToList
             return null;
         }

@@ -1,61 +1,60 @@
 package com.newbird.parse.core;
 
-import com.newbird.parse.config.FontConfigDefault;
+import android.content.Context;
+
 import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.model.NBPage;
+import com.newbird.parse.task.NBParserTask;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class NBParser {
+public class NBParserCore {
 
-    public static ParserWithConfig init(FontConfig config) {
-        ParserWithConfig pConfig =  new ParserWithConfig(config);
-        pConfig.measure(new NBMeasure.DefaultM());
-        return pConfig;
-    }
-
-    public static ParserWithConfig initDefault() {
-        ParserWithConfig config =  new ParserWithConfig(FontConfig.defaultConfig());
-        config.measure(new NBMeasure.DefaultM());
+    public static ConfigWrapper initDefault(Context context) {
+        ConfigWrapper config =  new ConfigWrapper(FontConfig.defaultConfig(context));
+        config.setMeasure(new NBMeasure.DefaultMeasure());
         return config;
     }
 
-    public static class ParserWithConfig {
+    public static ConfigWrapper init(FontConfig config) {
+        ConfigWrapper pConfig =  new ConfigWrapper(config);
+        pConfig.setMeasure(new NBMeasure.DefaultMeasure());
+        return pConfig;
+    }
+
+    public static class ConfigWrapper {
         FontConfig config;
         NBMeasure measure;
 
-        public ParserWithConfig(FontConfig config) {
+        private ConfigWrapper(FontConfig config) {
             this.config = config;
         }
 
-        public ParserWithConfig measure(NBMeasure measure) {
+        private void setMeasure(NBMeasure measure) {
             this.measure = measure;
-            return this;
         }
 
-        public ParseWrapper load(String orgStr) {
-            return new ParseWrapper(this, orgStr);
+        public ParseWorker setContent(String orgStr) {
+            return new ParseWorker(this, orgStr);
         }
-
-
     }
 
-    public static class ParseWrapper {
-        private ParserWithConfig mConfig;
+    public static class ParseWorker {
+        private ConfigWrapper mConfig;
         private String mOrgString;
         private ExecutorService mExecutor;
 
-        public ParseWrapper(ParserWithConfig mConfig, String orgString) {
+        public ParseWorker(ConfigWrapper mConfig, String orgString) {
             this.mConfig = mConfig;
             this.mOrgString = orgString;
         }
 
-        public AsyncRet async() {
+        public AsyncResp async() {
             mExecutor = Executors.newSingleThreadExecutor();
-            AsyncRet async = new AsyncRet();
+            AsyncResp async = new AsyncResp();
             execute(async);
             return async;
         }
@@ -66,13 +65,13 @@ public class NBParser {
             return sync;
         }
 
-        public AsyncRet async(ExecutorService executor) {
+        public AsyncResp async(ExecutorService executor) {
             if(executor != null) {
                 this.mExecutor = executor;
             } else {
                 mExecutor = Executors.newSingleThreadExecutor();
             }
-            AsyncRet async = new AsyncRet();
+            AsyncResp async = new AsyncResp();
             execute(async);
             return async;
         }
@@ -89,12 +88,12 @@ public class NBParser {
             return mConfig.measure;
         }
 
-        private void execute(AsyncRet asyncRet) {
-            mExecutor.execute(new ParserTask(asyncRet,this));
+        private void execute(AsyncResp asyncResp) {
+            mExecutor.execute(new NBParserTask(asyncResp,this));
         }
 
         private void execute(SyncRet syncRet) {
-            ParserTask task = new ParserTask(this);
+            NBParserTask task = new NBParserTask(this);
             syncRet.setPages(task.getData());
         }
     }
@@ -111,16 +110,16 @@ public class NBParser {
         }
     }
 
-    public static class AsyncRet {
+    public static class AsyncResp {
 
-        private WeakReference<ParseListener> mListener;
+        private WeakReference<NBParseListener> mListener;
 
-        public void into(ParseListener listener) {
+        public void load(NBParseListener listener) {
             mListener = new WeakReference<>(listener);
         }
 
-        protected void setPages(List<NBPage> list) {
-            ParseListener listener = mListener.get();
+        public void setPages(List<NBPage> list) {
+            NBParseListener listener = mListener.get();
             if (listener != null) {
                 listener.respPages(list);
             }

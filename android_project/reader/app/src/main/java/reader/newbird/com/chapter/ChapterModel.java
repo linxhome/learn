@@ -1,6 +1,6 @@
 package reader.newbird.com.chapter;
 
-import com.newbird.parse.model.PageModel;
+import com.newbird.parse.model.NBPage;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import reader.newbird.com.book.BookModel;
  */
 public class ChapterModel {
     public BookModel bookModel;//书籍相关信息
-    public List<PageModel> pageList;//章节分页
+    public List<NBPage> pageList;//章节分页
     public String title;//章节标题
     public String historyPosition; //阅读历史位置
     public int chapterSeq;//章节序号

@@ -4,6 +4,6 @@ import com.newbird.parse.model.NBPage;
 
 import java.util.List;
 
-public interface ParseListener {
+public interface NBParseListener {
     void respPages(List<NBPage> pages);
 }
