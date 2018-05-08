@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.fragment.CanvasFragment;
 import com.example.dai.categoryexample.fragment.LayoutParamFragment;
 import com.example.dai.categoryexample.fragment.NotificationFragment;
 import com.example.dai.categoryexample.fragment.NotifyItemFragment;
+import com.example.dai.categoryexample.fragment.UIThreadFragment;
 import com.example.dai.categoryexample.fragment.VisibleGoneFragment;
 
 import java.util.ArrayList;
@@ -43,18 +45,14 @@ public class FragmentManagerActivity extends FragmentActivity {
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         //增加页面的位置
         add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
         add("Recycler View Test", NotifyItemFragment.newInstance(1));
         add("layout params test",new LayoutParamFragment());
         add("Notifycation Problem",new NotificationFragment());
+        add("Non UI Thread Problem",new UIThreadFragment());
+        add("Canvas draw bitmap",new CanvasFragment());
     }
-
 
     private void add(String fragmentName, Fragment fragmentClass) {
         mFragmentMap.put(fragmentName, fragmentClass);
@@ -85,13 +83,13 @@ public class FragmentManagerActivity extends FragmentActivity {
                     android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
                     String name = mData.get(position);
                     Fragment fragment = mFragmentMap.get(name);
-                    if (fragment != null || !fragment.isAdded()) {
+                    if (fragment != null && !fragment.isAdded()) {
                         android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
                         transaction.add(android.R.id.content, fragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                     } else {
-                        Log.i("FragmentManagerActivity", name + "is null");
+                        Log.i("FragmentManagerActivity", name + "is null or has added");
                     }
                 }
             });
