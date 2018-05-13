@@ -1,12 +1,14 @@
 package com.newbird.parse.core;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.model.NBPage;
 import com.newbird.parse.task.NBParserTask;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +42,12 @@ public class NBParserCore {
         public ParseWorker setContent(String orgStr) {
             return new ParseWorker(this, orgStr);
         }
+
+        public Bitmap getBitmap(NBPage page) {
+            return NBBitmapFactory.load(page).sync();
+        }
     }
+
 
     public static class ParseWorker {
         private ConfigWrapper mConfig;
@@ -53,7 +60,9 @@ public class NBParserCore {
         }
 
         public AsyncResp async() {
-            mExecutor = Executors.newSingleThreadExecutor();
+            if(mExecutor == null) {
+                mExecutor = Executors.newSingleThreadExecutor();
+            }
             AsyncResp async = new AsyncResp();
             execute(async);
             return async;
@@ -94,7 +103,7 @@ public class NBParserCore {
 
         private void execute(SyncRet syncRet) {
             NBParserTask task = new NBParserTask(this);
-            syncRet.setPages(task.getData());
+            syncRet.setPages(task.createPages());
         }
     }
 
@@ -112,17 +121,20 @@ public class NBParserCore {
 
     public static class AsyncResp {
 
-        private WeakReference<NBParseListener> mListener;
+        private NBParseListener mListener;
+        Handler handler = new Handler(Looper.getMainLooper());
 
         public void load(NBParseListener listener) {
-            mListener = new WeakReference<>(listener);
+            mListener = listener;
         }
 
-        public void setPages(List<NBPage> list) {
-            NBParseListener listener = mListener.get();
-            if (listener != null) {
-                listener.respPages(list);
-            }
+        public void setPages(final List<NBPage> list) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mListener.respPages(list);
+                }
+            });
         }
     }
 

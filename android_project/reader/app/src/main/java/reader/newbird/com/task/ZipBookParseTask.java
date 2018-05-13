@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import reader.newbird.com.book.BookFileManager;
+import reader.newbird.com.book.BookManager;
 import reader.newbird.com.utils.FileUtils;
 import reader.newbird.com.utils.IOUtils;
 import reader.newbird.com.utils.Logs;
@@ -40,9 +40,9 @@ public class ZipBookParseTask implements Runnable {
     @Override
     public void run() {
         String bookPath = mOutputDir;
-        String infoPath = bookPath + File.separator + BookFileManager.INFO_PREFIX;
-        String coverPath = bookPath + File.separator + BookFileManager.COVER_PREFIX;
-        String chapterPath = bookPath + File.separator + BookFileManager.CHAPTER_DIR;
+        String infoPath = bookPath + File.separator + BookManager.INFO_PREFIX;
+        String coverPath = bookPath + File.separator + BookManager.COVER_PREFIX;
+        String chapterPath = bookPath + File.separator + BookManager.CHAPTER_DIR;
 
         File bookDir = new File(bookPath);
         if (!bookDir.exists() || !bookDir.isDirectory()) {
@@ -51,10 +51,10 @@ public class ZipBookParseTask implements Runnable {
             File info = new File(infoPath);
             File cover = new File(coverPath);
             File chapter = new File(chapterPath);
-            if (info.exists() && cover.exists() && chapter.exists()) {
-                //不重复解析
+            /*if (info.exists() && cover.exists() && chapter.exists()) {
+                //todo restore 不重复解析
                 return;
-            }
+            }*/
         }
 
         ZipInputStream zipFile = new ZipInputStream(this.mBookInputStream, Charset.forName("gbk"));
@@ -66,11 +66,11 @@ public class ZipBookParseTask implements Runnable {
                     continue;
                 }
                 String entryName = fileEntry.getName();
-                if (entryName.startsWith(BookFileManager.COVER_PREFIX)) {
+                if (entryName.startsWith(BookManager.COVER_PREFIX)) {
                     FileUtils.writeFromInputStream(zipFile, coverPath);
-                } else if (entryName.equals(BookFileManager.INFO_PREFIX)) {
+                } else if (entryName.equals(BookManager.INFO_PREFIX)) {
                     FileUtils.writeFromInputStream(zipFile, infoPath);
-                } else if (entryName.endsWith(BookFileManager.TXT_SUFFIX)) {
+                } else if (entryName.endsWith(BookManager.TXT_SUFFIX)) {
                     parseToChapter(zipFile, chapterPath);
                 }
                 fileEntry = zipFile.getNextEntry();
@@ -102,11 +102,11 @@ public class ZipBookParseTask implements Runnable {
                         write.flush();
                     }
                     IOUtils.closeQuite(write);
-                    write = new FileWriter(path + File.separator + chapterIndex + BookFileManager.CHAPTER_FILE_SUFFIX);
-                    write.write(line);
+                    write = new FileWriter(path + File.separator + chapterIndex + BookManager.CHAPTER_FILE_SUFFIX);
+                    write.write(line + "\n" );
                 } else {
                     if(write != null) {
-                        write.write(line);
+                        write.write(line + "\n");
                     }
                 }
                 line = bufferedReader.readLine();

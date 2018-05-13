@@ -10,11 +10,12 @@ import java.util.List;
  * 每章分页之后的数据
  */
 public class NBPage {
-    public List<NBLine> lists = new ArrayList<>();
+    public List<NBLine> lines = new ArrayList<>();
     public FontConfig config;
+    public String oriString;
 
     public void add(NBLine line) {
-        lists.add(line);
+        lines.add(line);
     }
 
 }

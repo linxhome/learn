@@ -28,15 +28,14 @@ public class NBParserTask implements Runnable {
     @Override
     public void run() {
         if (asyncResp != null) {
-            asyncResp.setPages(getData());
+            asyncResp.setPages(createPages());
         }
     }
 
     /**
-     * 分页任务的核心方法
      * @return
      */
-    public List<NBPage> getData() {
+    public List<NBPage> createPages() {
         String oriStr = parseWrapper.getOriString();
         FontConfig config = parseWrapper.getConfig();
         NBMeasure measure = parseWrapper.getMeasure();
@@ -47,17 +46,22 @@ public class NBParserTask implements Runnable {
         List<NBWord> words = new ArrayList<>();
         NBWord word = null;
         while (index < length) {
-            char charactor = oriStr.charAt(index);
-
-            //当前是换行，前一个也是换行，需要合并换行符
-            if (index > 1 && isPunct(charactor) && isPunct(oriStr.charAt(index - 1))) {
-                word.type = NBWord.PUNCT;
+            char character = oriStr.charAt(index);
+            if (index > 1 && isEnterLine(oriStr.charAt(index - 1))) {
+                //新的一行
+                if (isEnterLine(character)) {
+                    //当前是换行，需要合并换行符
+                    word.type = NBWord.NEWLINE;
+                } else {
+                    //当前不是换行符，则是段落头
+                    word.isParagraphHead = true;
+                }
             } else {
                 word = new NBWord();
-                if (isPunct(charactor)) {
-                    word.type = NBWord.PUNCT;
-                } else if (isEnterLine(charactor)) {
-                    word.type = NBWord.ENTER;
+                if (isComma(character)) {
+                    word.type = NBWord.COMMA;
+                } else if (isEnterLine(character)) {
+                    word.type = NBWord.NEWLINE;
                 } else {
                     word.type = NBWord.WORD;
                 }
@@ -68,20 +72,24 @@ public class NBParserTask implements Runnable {
         }
 
         //文字分行
-        int areaWidth = config.screenWidth - config.horizonGap * 2;
-        int areaHeight = config.screenHeight - config.verticalGap * 2;
+        int spaceWidth = measure.getSize("空格", config, 0, 2).width;
+        int areaWidth = config.contentWidth - 2 * config.horizonMargin;
+        int areaHeight = config.contentHeight - 2 * config.verticalMargin;
         int remainWid = areaWidth;
         NBLine newLine = new NBLine();
         List<NBLine> lines = new ArrayList<>();
         lines.add(newLine);
         for (NBWord word1 : words) {
             //超过宽度或者遇到换行符就要换行
-            if (word == null) {
+            if (word1 == null) {
                 continue;
             }
-            char currentChar = oriStr.charAt(word.position);
+            char currentChar = oriStr.charAt(word1.position);
             TextMeasureSize size = measure.getSize(oriStr, config, word1.position, word1.position + 1);
-            word.meaWidth = size.width;
+            word1.measureWidth = size.width;
+            if (word1.isParagraphHead) {
+                word1.measureWidth += spaceWidth;
+            }
             if (isEnterLine(currentChar)) {
                 newLine.append(word1);
                 newLine = new NBLine();
@@ -89,6 +97,7 @@ public class NBParserTask implements Runnable {
                 lines.add(newLine);
             } else if (remainWid - size.width >= 0) {
                 newLine.append(word1);
+                remainWid -= size.width;
             } else {
                 newLine = new NBLine();
                 remainWid = areaWidth;
@@ -100,7 +109,7 @@ public class NBParserTask implements Runnable {
         int lineHeight = measure.getSize(oriStr, config, 0, 1).height;
         //标题额外空一行出来 ，标题字号自动加2
         //按行分页
-        int linesPerPage = areaHeight / lineHeight;
+        int linesPerPage = areaHeight / (lineHeight + config.lineGap);
         int linesSize = lines.size();
         List<NBPage> pages = new ArrayList<>();
         NBPage page = null;
@@ -108,11 +117,11 @@ public class NBParserTask implements Runnable {
         while (index < linesSize) {
             if (index % linesPerPage == 0) {
                 page = new NBPage();
-                page.add(lines.get(index));
                 page.config = config;
-            } else {
+                page.oriString = oriStr;
                 pages.add(page);
             }
+            page.add(lines.get(index));
             index++;
         }
         return pages;
@@ -124,9 +133,9 @@ public class NBParserTask implements Runnable {
      * @param cc
      * @return
      */
-    private boolean isPunct(char cc) {
-        String seperator = ",. 。，|-=+&^%$#@!&()?";
-        return seperator.indexOf(cc) > 0;
+    private boolean isComma(char cc) {
+        String separator = ",. 。，|-=+&^%$#@!&()?";
+        return separator.indexOf(cc) > 0;
     }
 
     private boolean isEnterLine(char cc) {

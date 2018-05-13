@@ -8,4 +8,5 @@ public class IntentConstant {
 
     //parcel 的key
     public static final String PARCEL_BOOK_MODEL = "BOOK_MODEL";
+
 }

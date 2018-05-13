@@ -4,9 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-
+    <color name="half_transparent_grey">#55999999</color>
     <color name="deep_grey">#333333</color>
     <color name="dark_grey">#666666</color>
-    <color name="dim_grey">#999999</color>
+    <color name="dim_grey">#eeeeee</color>
 
 </resources>

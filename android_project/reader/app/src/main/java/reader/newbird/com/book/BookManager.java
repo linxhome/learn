@@ -3,17 +3,13 @@ package reader.newbird.com.book;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.design.widget.TabLayout;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,8 +24,8 @@ import reader.newbird.com.utils.Logs;
 /**
  * 书籍文件管理
  */
-public class BookFileManager {
-    private static final String TAG = "BookFileManager";
+public class BookManager {
+    private static final String TAG = "BookManager";
 
     public static final String COVER_PREFIX = "cover";//封面文件前缀
     public static final String INFO_PREFIX = "info";//书籍详情文件前缀
@@ -50,7 +46,7 @@ public class BookFileManager {
         if (file.exists() && file.isDirectory()) {
             File[] dirs = file.listFiles();
             for (File bookDir : dirs) {
-                BookModel book = getBook(bookDir.getAbsolutePath());
+                BookModel book = createBookModel(bookDir.getAbsolutePath());
                 if (book != null && book.isValid()) {
                     books.add(book);
                 }
@@ -59,11 +55,11 @@ public class BookFileManager {
         return books;
     }
 
-    public AssetsFileAsyncTask initAssetBook(IGetBook listener) {
+    public AssetsFileAsyncTask readAssetBook(IGetBook listener) {
         return new AssetsFileAsyncTask(listener);
     }
 
-    private static BookModel getBook(String path) {
+    private static BookModel createBookModel(String path) {
         File bookDir = new File(path);
         File[] files = bookDir.listFiles();
         BookModel bookModel = BookModel.obtain();
@@ -86,7 +82,11 @@ public class BookFileManager {
                 if (file.isDirectory()) {
                     String[] chapters = file.list();
                     List<String> chapterSeqs = Arrays.asList(chapters);
-                    Collections.sort(chapterSeqs);
+                    Collections.sort(chapterSeqs, (o1, o2) -> {
+                        String a = o1.replace(BookManager.CHAPTER_FILE_SUFFIX,"");
+                        String b= o2.replace(BookManager.CHAPTER_FILE_SUFFIX,"");
+                        return Integer.valueOf(a).compareTo(Integer.valueOf(b));
+                    });
                     bookModel.chapterSeqs = chapterSeqs;
                 }
             }
@@ -128,7 +128,7 @@ public class BookFileManager {
             super.onProgressUpdate(values);
             if (values != null && values.length > 0) {
                 String bookPath = values[0];
-                BookModel book = getBook(bookPath);
+                BookModel book = createBookModel(bookPath);
                 if (dataListener != null) {
                     dataListener.updateBook(book);
                 }

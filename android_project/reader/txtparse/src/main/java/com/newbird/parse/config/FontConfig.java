@@ -13,28 +13,31 @@ public class FontConfig {
     public int lineGap;
     public Typeface typeface;
     public FontType fontType;
-    public int horizonGap;//水平页边距
-    public int verticalGap;//竖直页边距
-    public int screenWidth;
-    public int screenHeight;
+    public int horizonMargin;//水平页边距
+    public int verticalMargin;//竖直页边距
+    public int contentWidth;
+    public int contentHeight;
 
     enum FontType {
-        DEFAULT_TYPE,SIMPLE,YAHEI
+        DEFAULT_TYPE, SIMPLE, YAHEI
     }
 
 
     public static FontConfig defaultConfig(Context context) {
         FontConfig config = new FontConfig();
-        config.fontSize = 12;
+        float scaleDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        config.fontSize = (int) (18 * scaleDensity);
         config.fontType = FontType.DEFAULT_TYPE;
-        config.lineGap = 3;
+        config.lineGap = (int) (3 * scaleDensity);
+        config.verticalMargin = (int) (10 * scaleDensity);
+        config.horizonMargin = (int) (10 * scaleDensity);
 
         WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
-        if(windowManager != null) {
+        if (windowManager != null) {
             DisplayMetrics metrics = new DisplayMetrics();
             windowManager.getDefaultDisplay().getMetrics(metrics);
-            config.screenWidth = metrics.widthPixels;
-            config.screenHeight = metrics.heightPixels;
+            config.contentWidth = metrics.widthPixels;
+            config.contentHeight = metrics.heightPixels ;
         }
         return config;
     }

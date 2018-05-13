@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.newbird.parse.core.NBParserCore;
 import com.newbird.parse.model.NBPage;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_page, parent);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_page, parent,false);
         ViewHolder holder = new ViewHolder(view);
         holder.pageView = view.findViewById(R.id.page_view);
         return holder;
@@ -34,7 +35,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         NBPage page = mData.get(position);
-        Bitmap bitmap = mPresenter.getPageBitmap(page);
+        Bitmap bitmap = NBParserCore.initDefault(holder.pageView.getContext()).getBitmap(page);
         holder.pageView.setImageBitmap(bitmap);
     }
 

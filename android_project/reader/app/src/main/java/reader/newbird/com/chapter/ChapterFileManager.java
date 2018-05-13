@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import reader.newbird.com.base.ThreadManager;
+import reader.newbird.com.book.BookManager;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.utils.FileUtils;
 
@@ -39,7 +40,7 @@ public class ChapterFileManager {
                 throw new RuntimeException("null chapter info");
             }
             BookModel bookInfo = chapterInfo.bookModel;
-            String chapterFilePath = bookInfo.bookDir + File.separator + bookInfo.chapterSeqs.get(chapterInfo.chapterSeq);
+            String chapterFilePath = bookInfo.bookDir + File.separator + BookManager.CHAPTER_DIR + File.separator + chapterInfo.chapterFileName;
             File chapterFile = new File(chapterFilePath);
             if (!chapterFile.exists() || chapterFile.isDirectory()) {
                 throw new RuntimeException(new IOException("bad chapter file"));

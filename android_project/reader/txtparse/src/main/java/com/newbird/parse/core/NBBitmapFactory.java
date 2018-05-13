@@ -2,6 +2,7 @@ package com.newbird.parse.core;
 
 import android.graphics.Bitmap;
 
+import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.model.NBPage;
 import com.newbird.parse.task.NBBitmapTask;
 

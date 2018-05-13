@@ -37,7 +37,7 @@
             android:layout_alignStart="@id/book_name"
             android:layout_below="@id/book_name"
             android:layout_marginTop="10dp"
-            android:textColor="@color/dim_grey"
+            android:textColor="@color/dark_grey"
             android:textSize="@dimen/book_name_font_size"
             tools:text="作者" />
     </RelativeLayout>
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textColor="@color/dim_grey"
+        android:textColor="@color/dark_grey"
         android:textSize="@dimen/book_name_font_size"
         tools:text="简介" />
 

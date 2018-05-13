@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/page_list"
         android:layout_width="match_parent"
@@ -18,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="top"
-        android:background="@color/colorPrimary"
+        android:background="@color/half_transparent_grey"
         android:gravity="center_vertical"
         android:paddingBottom="5dp"
         android:paddingTop="10dp">
@@ -47,5 +46,41 @@
             android:src="@drawable/icon_setting" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/menu_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="@color/half_transparent_grey">
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="目录" />
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="进度" />
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="设置" />
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="评论" />
+    </LinearLayout>
 
 </FrameLayout>

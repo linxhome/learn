@@ -13,7 +13,7 @@ public interface NBMeasure {
         public TextMeasureSize getSize(String word, FontConfig config, int start, int end) {
             Paint paint = new Paint();
             paint.setTextSize(config.fontSize);
-            paint.setTypeface(config.typeface);
+           // paint.setTypeface(config.typeface);
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setAntiAlias(true);
             float width = paint.measureText(word,start,end);

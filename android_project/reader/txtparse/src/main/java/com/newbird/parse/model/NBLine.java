@@ -10,4 +10,7 @@ public class NBLine {
         words.add(word);
     }
 
+    public List<NBWord> getWords() {
+        return words;
+    }
 }

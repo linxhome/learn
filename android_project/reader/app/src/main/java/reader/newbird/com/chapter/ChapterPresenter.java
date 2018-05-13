@@ -19,7 +19,7 @@ public class ChapterPresenter implements IGetChapter {
         this.mBookInfo = mBookInfo;
     }
 
-    public void setChapterPageView(IGetChapter mChapterPageView) {
+    public void setViewCallback(IGetChapter mChapterPageView) {
         this.mChapterPageView = mChapterPageView;
     }
 
@@ -42,11 +42,6 @@ public class ChapterPresenter implements IGetChapter {
      */
     public void getPages(ChapterModel chapterInfo,NBParseListener listener) {
         NBParserCore.initDefault(mContext).setContent(chapterInfo.content).async().load(listener);
-    }
-
-    public Bitmap getPageBitmap(NBPage page) {
-        //from page data to bitmap
-        return null;
     }
 
     public void onDestroy() {
