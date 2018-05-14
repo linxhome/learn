@@ -1,11 +1,9 @@
 package reader.newbird.com.chapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.newbird.parse.core.NBParseListener;
 import com.newbird.parse.core.NBParserCore;
-import com.newbird.parse.model.NBPage;
 
 import reader.newbird.com.book.BookModel;
 
@@ -26,15 +24,16 @@ public class ChapterPresenter implements IGetChapter {
     /**
      * 获得章节基本信息
      */
-    public void getChapterInfo(int seq) {
+    public void getChapterModel(int seq) {
         if (mBookInfo == null || !mBookInfo.isValid()) {
             return;
         }
-        if (seq > mBookInfo.chapterSeqs.size()) {
+        if (seq > mBookInfo.chapterPaths.size()) {
             return;
         }
-        ChapterFileManager.parseBaseChapterInfo(mBookInfo, seq, this);
+        ChapterManager.getChapterModel(mBookInfo, seq, this);
     }
+
 
     /**
      * 获得分页后的分页列表
@@ -55,4 +54,6 @@ public class ChapterPresenter implements IGetChapter {
             mChapterPageView.onGetChapterInfo(chapterInfo);
         }
     }
+
+
 }

@@ -2,6 +2,12 @@ package reader.newbird.com.task;
 
 import android.text.TextUtils;
 
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,11 +16,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import reader.newbird.com.book.BookManager;
 import reader.newbird.com.utils.FileUtils;
@@ -28,12 +33,13 @@ import reader.newbird.com.utils.Logs;
 public class ZipBookParseTask implements Runnable {
     private static final String TAG = "ZipBookParseTask";
 
-    private InputStream mBookInputStream;
+    private String mZipPath;
     private String mOutputDir;
+    private List<String> mTitles = new ArrayList<>();
 
 
-    public ZipBookParseTask(InputStream inputStream, String outputPath) {
-        this.mBookInputStream = inputStream;
+    public ZipBookParseTask(String zipPath, String outputPath) {
+        this.mZipPath = zipPath;
         this.mOutputDir = outputPath;
     }
 
@@ -51,37 +57,54 @@ public class ZipBookParseTask implements Runnable {
             File info = new File(infoPath);
             File cover = new File(coverPath);
             File chapter = new File(chapterPath);
-            /*if (info.exists() && cover.exists() && chapter.exists()) {
-                //todo restore 不重复解析
+            if (info.exists() && cover.exists() && chapter.exists()) {
                 return;
-            }*/
+            }
         }
 
-        ZipInputStream zipFile = new ZipInputStream(this.mBookInputStream, Charset.forName("gbk"));
-        ZipEntry fileEntry = null;
+        ZipFile zipFile = null;
         try {
-            fileEntry = zipFile.getNextEntry();
-            while (fileEntry != null) {
-                if (fileEntry.isDirectory()) {
-                    continue;
-                }
-                String entryName = fileEntry.getName();
+            zipFile = new ZipFile(mZipPath, "GBK");
+            Enumeration<ZipEntry> entries = zipFile.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+                InputStream entryInputStream = zipFile.getInputStream(entry);
                 if (entryName.startsWith(BookManager.COVER_PREFIX)) {
-                    FileUtils.writeFromInputStream(zipFile, coverPath);
+                    FileUtils.putInputStream(entryInputStream, coverPath);
                 } else if (entryName.equals(BookManager.INFO_PREFIX)) {
-                    FileUtils.writeFromInputStream(zipFile, infoPath);
+                    FileUtils.putInputStream(entryInputStream, infoPath);
                 } else if (entryName.endsWith(BookManager.TXT_SUFFIX)) {
-                    parseToChapter(zipFile, chapterPath);
+                    parseToChapter(entryInputStream, chapterPath);
                 }
-                fileEntry = zipFile.getNextEntry();
             }
         } catch (IOException e) {
             Logs.e(TAG, e);
         } finally {
-            IOUtils.closeQuite(zipFile);
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+
+                }
+            }
+        }
+
+        String infJson = FileUtils.getContent(infoPath);
+        if (TextUtils.isEmpty(infJson)) {
+            return;
+        }
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(infJson);
+            jsonObject.put("category", new JSONArray(mTitles));
+        } catch (JSONException e) {
+            Logs.e(TAG, e);
+        }
+        if (jsonObject != null) {
+            FileUtils.putContent(infoPath, jsonObject.toString(), false);
         }
     }
-
 
     private void parseToChapter(InputStream inputStream, String path) {
         File chapterDir = new File(path);
@@ -98,20 +121,21 @@ public class ZipBookParseTask implements Runnable {
                 if (isChapterTitle(line)) {
                     //make the new file
                     chapterIndex++;
-                    if(write != null) {
+                    if (write != null) {
                         write.flush();
                     }
                     IOUtils.closeQuite(write);
                     write = new FileWriter(path + File.separator + chapterIndex + BookManager.CHAPTER_FILE_SUFFIX);
-                    write.write(line + "\n" );
+                    write.write(line + "\n");
+                    mTitles.add(line);
                 } else {
-                    if(write != null) {
+                    if (write != null) {
                         write.write(line + "\n");
                     }
                 }
                 line = bufferedReader.readLine();
             }
-            if(write != null) {
+            if (write != null) {
                 write.flush();
             }
             IOUtils.closeQuite(write);

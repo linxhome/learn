@@ -4,6 +4,7 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,12 +70,20 @@ public class BookManager {
             if (filename.equals(COVER_PREFIX)) {
                 bookModel.cover = Uri.parse("file:" + path + File.separator + COVER_PREFIX);
             } else if (filename.equals(INFO_PREFIX)) {
-                String infoJson = FileUtils.readFileToString(file.getAbsolutePath());
+                String infoJson = FileUtils.getContent(file.getAbsolutePath());
                 try {
                     JSONObject jsonObj = new JSONObject(infoJson);
                     bookModel.authorName = jsonObj.getString("author_name");
                     bookModel.bookName = jsonObj.getString("book_name");
                     bookModel.detail = jsonObj.getString("detail");
+                    bookModel.titles = new ArrayList<>();
+                    JSONArray jsonArray = jsonObj.getJSONArray("category");
+                    if (jsonArray != null) {
+                        int size = jsonArray.length();
+                        for (int i = 0; i < size; i++) {
+                            bookModel.titles.add(jsonArray.getString(i));
+                        }
+                    }
                 } catch (JSONException e) {
                     Logs.d(TAG, e);
                 }
@@ -83,11 +92,11 @@ public class BookManager {
                     String[] chapters = file.list();
                     List<String> chapterSeqs = Arrays.asList(chapters);
                     Collections.sort(chapterSeqs, (o1, o2) -> {
-                        String a = o1.replace(BookManager.CHAPTER_FILE_SUFFIX,"");
-                        String b= o2.replace(BookManager.CHAPTER_FILE_SUFFIX,"");
+                        String a = o1.replace(BookManager.CHAPTER_FILE_SUFFIX, "");
+                        String b = o2.replace(BookManager.CHAPTER_FILE_SUFFIX, "");
                         return Integer.valueOf(a).compareTo(Integer.valueOf(b));
                     });
-                    bookModel.chapterSeqs = chapterSeqs;
+                    bookModel.chapterPaths = chapterSeqs;
                 }
             }
         }
@@ -112,7 +121,9 @@ public class BookManager {
                 for (String bookName : files) {
                     InputStream inputStream = assetFile.open(PathConstant.LOCAL_BOOK_DIR_NAME + File.separator + bookName);
                     String outputPath = PathConstant.BOOK_STORE_DIR + File.separator + bookName;
-                    Runnable task = new ZipBookParseTask(inputStream, outputPath);
+                    String tempPath = PathConstant.APP_TEMP + File.separator + bookName;
+                    FileUtils.putInputStream(inputStream, tempPath);
+                    Runnable task = new ZipBookParseTask(tempPath, outputPath);
                     task.run();
                     publishProgress(outputPath);
                 }

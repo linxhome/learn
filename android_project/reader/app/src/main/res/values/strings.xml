@@ -3,4 +3,5 @@
     <string name="title_home">发现</string>
     <string name="title_dashboard">书架</string>
     <string name="title_notifications">我的</string>
+    <string name="page_navi_search">搜索</string>
 </resources>

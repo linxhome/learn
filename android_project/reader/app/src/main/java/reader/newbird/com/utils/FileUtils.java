@@ -2,12 +2,9 @@ package reader.newbird.com.utils;
 
 import android.text.TextUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +17,7 @@ public class FileUtils {
     private static final String TAG = "FileUtils";
 
 
-    public static void writeFromInputStream(InputStream inputStream, String filePath) throws IOException {
+    public static void putInputStream(InputStream inputStream, String filePath) {
         File file = new File(filePath);
         FileOutputStream write = null;
         try {
@@ -38,7 +35,7 @@ public class FileUtils {
         }
     }
 
-    public static String readFileToString(String filePath) {
+    public static String getContent(String filePath) {
         if (TextUtils.isEmpty(filePath)) {
             return null;
         }
@@ -61,6 +58,22 @@ public class FileUtils {
             return null;
         } finally {
             IOUtils.closeQuite(inputStream);
+        }
+    }
+
+    public static void putContent(String filePath, String content, boolean isAppend) {
+        if (TextUtils.isEmpty(filePath) || TextUtils.isEmpty(content)) {
+            return;
+        }
+        FileWriter write = null;
+        try {
+            write = new FileWriter(new File(filePath), isAppend);
+            write.write(content);
+            write.flush();
+        } catch (IOException e) {
+            Logs.e(TAG, e);
+        } finally {
+            IOUtils.closeQuite(write);
         }
     }
 

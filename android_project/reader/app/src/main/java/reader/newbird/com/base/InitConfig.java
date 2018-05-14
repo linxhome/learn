@@ -14,6 +14,7 @@ public class InitConfig {
             File cache = context.getExternalCacheDir();
             File root = cache == null ? null : cache.getParentFile();
             if(root != null) {
+                PathConstant.APP_TEMP = cache.getAbsolutePath();
                 if(!root.exists() && !root.isDirectory()) {
                     root.mkdir();
                 }
@@ -27,7 +28,5 @@ public class InitConfig {
         }
         PathConstant.BOOK_STORE_DIR = bookStoreContent.getAbsolutePath();
     }
-
-
 
 }

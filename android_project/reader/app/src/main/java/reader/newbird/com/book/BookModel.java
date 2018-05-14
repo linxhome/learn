@@ -5,16 +5,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import java.net.URI;
 import java.util.List;
 
 public class BookModel implements Parcelable {
     public String bookName;
-    public List<String> chapterSeqs;
+    public List<String> chapterPaths;
     public String authorName;
     public String bookDir;//书籍存储的目录
     public String detail;
     public Uri cover;
+    public List<String> titles;
 
     public BookModel() {
 
@@ -22,7 +22,7 @@ public class BookModel implements Parcelable {
 
     protected BookModel(Parcel in) {
         bookName = in.readString();
-        chapterSeqs = in.createStringArrayList();
+        chapterPaths = in.createStringArrayList();
         authorName = in.readString();
         bookDir = in.readString();
         detail = in.readString();
@@ -47,7 +47,7 @@ public class BookModel implements Parcelable {
 
 
     public boolean isValid() {
-        return !TextUtils.isEmpty(bookName) && chapterSeqs != null;
+        return !TextUtils.isEmpty(bookName) && chapterPaths != null;
     }
 
 
@@ -59,7 +59,7 @@ public class BookModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(bookName);
-        dest.writeStringList(chapterSeqs);
+        dest.writeStringList(chapterPaths);
         dest.writeString(authorName);
         dest.writeString(bookDir);
         dest.writeString(detail);

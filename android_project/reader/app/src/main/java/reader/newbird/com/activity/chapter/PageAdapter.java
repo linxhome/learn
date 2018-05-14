@@ -28,7 +28,7 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragment_page, parent,false);
         ViewHolder holder = new ViewHolder(view);
-        holder.pageView = view.findViewById(R.id.page_view);
+        holder.pageView = (ImageView) view.findViewById(R.id.page_view);
         return holder;
     }
 

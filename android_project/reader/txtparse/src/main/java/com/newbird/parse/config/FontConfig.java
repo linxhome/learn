@@ -17,6 +17,8 @@ public class FontConfig {
     public int verticalMargin;//竖直页边距
     public int contentWidth;
     public int contentHeight;
+    public int backgroundColor;
+    public int textColor;
 
     enum FontType {
         DEFAULT_TYPE, SIMPLE, YAHEI
@@ -31,6 +33,8 @@ public class FontConfig {
         config.lineGap = (int) (3 * scaleDensity);
         config.verticalMargin = (int) (10 * scaleDensity);
         config.horizonMargin = (int) (10 * scaleDensity);
+        config.backgroundColor = ColorConfig.BackgroundColor.SHEEP_SKIN;
+        config.textColor = ColorConfig.TextColor.STYLE_ONE;
 
         WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
         if (windowManager != null) {

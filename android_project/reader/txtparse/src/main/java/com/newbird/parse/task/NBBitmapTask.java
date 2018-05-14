@@ -2,7 +2,6 @@ package com.newbird.parse.task;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.newbird.parse.config.FontConfig;
@@ -37,9 +36,9 @@ public class NBBitmapTask implements Runnable {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setTextSize(mConfig.fontSize);
-        paint.setColor(Color.BLACK);
+        paint.setColor(mConfig.textColor);
         paint.setAntiAlias(true);
-        canvas.drawColor(Color.YELLOW);
+        canvas.drawColor(mConfig.backgroundColor);
         float height = paint.descent() - paint.ascent();
         float drawPosY = height + mConfig.verticalMargin;
         float drawPosX = mConfig.horizonMargin;

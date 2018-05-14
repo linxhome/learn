@@ -14,12 +14,13 @@ import reader.newbird.com.book.BookManager;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.utils.FileUtils;
 
-public class ChapterFileManager {
+public class ChapterManager {
 
-    public static void parseBaseChapterInfo(BookModel bookInfo, int chapterSeq, IGetChapter callback)  {
+    public static void getChapterModel(BookModel bookInfo, int chapterSeq, IGetChapter callback)  {
         ChapterModel simpleChapter = ChapterModel.obtain(bookInfo,chapterSeq);
         new BaseChapterParesTask(callback).executeOnExecutor(ThreadManager.getInstance().getIOThread(),simpleChapter);
     }
+
 
     public static void parsePages(ChapterModel chapterInfo,IGetChapter callback) {
         new PageParseTask(callback).executeOnExecutor(ThreadManager.getInstance().getIOThread(),chapterInfo);
@@ -45,7 +46,7 @@ public class ChapterFileManager {
             if (!chapterFile.exists() || chapterFile.isDirectory()) {
                 throw new RuntimeException(new IOException("bad chapter file"));
             }
-            String content = FileUtils.readFileToString(chapterFilePath);
+            String content = FileUtils.getContent(chapterFilePath);
             chapterInfo.content = content;
             //根据前面的解析，第一行一定是标题
             int titleIndex = content != null ? content.indexOf("\n") : -1;
