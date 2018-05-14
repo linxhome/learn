@@ -31,6 +31,8 @@ public class CanvasFragment extends Fragment {
     private ImageView mCanvas;
     private Handler mHandler;
 
+    private int mTextSize;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class CanvasFragment extends Fragment {
         mCanvas = (ImageView) root.findViewById(R.id.canvas_for_draw);
         initView();
         mHandler = new Handler(Looper.getMainLooper());
+
+        mTextSize = 16 * (int) getResources().getDisplayMetrics().scaledDensity;
         return root;
     }
 
@@ -72,19 +76,18 @@ public class CanvasFragment extends Fragment {
                 return;
             }
             Paint txtPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            txtPaint.setTextSize(16);
-            txtPaint.setColor(Color.WHITE);
+            txtPaint.setTextSize(mTextSize);
+            txtPaint.setColor(Color.BLUE);
             Rect rect = new Rect();
             txtPaint.getTextBounds(mString, 0, mString.length() - 1, rect);
             int height = rect.height();
             int width = rect.width();
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
             Canvas canvas = new Canvas(bitmap);
-            canvas.drawText(mString, 5, rect.height() + 5, txtPaint);
+            canvas.drawText(mString, 0, rect.height(), txtPaint);
             mHandler.post(() -> mCanvas.setImageBitmap(bitmap));
         }
     }
-
 
 
 }
