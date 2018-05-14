@@ -64,6 +64,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mChapterTitle = (TextView) findViewById(R.id.chapter_title);
         mSettingIcon = findViewById(R.id.setting_icon);
         mDrawerNavi = (NavigationView) findViewById(R.id.content_navi);
+        mChapterTitle = (TextView) mHeadMenu.findViewById(R.id.chapter_title);
+        mBackPress = mHeadMenu.findViewById(R.id.back_press);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mPageRecyclerView);
@@ -79,6 +81,12 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             mHeadMenu.setVisibility(View.GONE);
             mBottomMenu.setVisibility(View.GONE);
         }, 3000);
+
+        mBackPress.setOnClickListener(v -> {
+            finish();
+        });
+
+
     }
 
     private void initData() {
@@ -94,6 +102,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDataPresenter.setViewCallback(this);
         mDataPresenter.getChapterModel(mCurrentChapterSeq);
 
+        mChapterTitle.setText(mBookInfo.bookName);
     }
 
     //初始化目录
@@ -159,7 +168,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     }
 
     private void toggleMenuVisible() {
-        if(mHeadMenu.getVisibility() == View.VISIBLE) {
+        if (mHeadMenu.getVisibility() == View.VISIBLE) {
             mHeadMenu.setVisibility(View.GONE);
             mBottomMenu.setVisibility(View.GONE);
         } else {
