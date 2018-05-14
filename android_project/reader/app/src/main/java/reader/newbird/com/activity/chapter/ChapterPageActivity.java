@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,9 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import reader.newbird.com.R;
+import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.chapter.ChapterModel;
 import reader.newbird.com.chapter.ChapterPresenter;
@@ -23,7 +29,7 @@ import reader.newbird.com.chapter.IGetChapter;
 import reader.newbird.com.config.IntentConstant;
 import reader.newbird.com.utils.Logs;
 
-public class ChapterPageActivity extends AppCompatActivity implements IGetChapter {
+public class ChapterPageActivity extends AppCompatActivity implements IGetChapter, PageClickListener {
 
     private RecyclerView mPageRecyclerView;
     private View mHeadMenu;
@@ -45,8 +51,9 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_chapter_page);
-        initData();
         initView();
+        initData();
+        initCategory();
     }
 
     private void initView() {
@@ -62,6 +69,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         snapHelper.attachToRecyclerView(mPageRecyclerView);
         mPageAdapter = new PageAdapter(mDataPresenter);
         mPageRecyclerView.setAdapter(mPageAdapter);
+        mPageAdapter.setClickListener(this);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mPageRecyclerView.setLayoutManager(manager);
@@ -85,7 +93,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDataPresenter = new ChapterPresenter(this, mBookInfo);
         mDataPresenter.setViewCallback(this);
         mDataPresenter.getChapterModel(mCurrentChapterSeq);
-        initCategory();
+
     }
 
     //初始化目录
@@ -93,12 +101,12 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         if (mBookInfo == null) {
             return;
         }
-        /*ImageView cover = (ImageView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_cover);
-        Glide.with(ReaderContext.getInstance().get()).load(mBookInfo.cover).into(cover);
+        ImageView cover = (ImageView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_cover);
+        Glide.with(this).load(mBookInfo.cover).into(cover);
         TextView authorText = (TextView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_author_name);
         authorText.setText(mBookInfo.authorName);
         TextView bookText = (TextView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_book_name);
-        bookText.setText(mBookInfo.bookName);*/
+        bookText.setText(mBookInfo.bookName);
 
         if (mBookInfo.titles == null || mBookInfo.chapterPaths == null) {
             return;
@@ -111,18 +119,20 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             mBookInfo.titles = mBookInfo.titles.subList(0, chapterSize);
         }
 
+        NavigationMenuView navigationMenuView = (NavigationMenuView) mDrawerNavi.getChildAt(0);
+        if (navigationMenuView != null) {
+            navigationMenuView.setVerticalScrollBarEnabled(false);
+        }
+
         mDrawerNavi.getMenu().clear();
         for (String title : mBookInfo.titles) {
             mDrawerNavi.getMenu().add(title);
         }
-        mDrawerNavi.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int order = item.getOrder();
-                String chapterSeq = mBookInfo.chapterPaths.get(order);
-                //todo jump to the order size
-                return false;
-            }
+        mDrawerNavi.setNavigationItemSelectedListener(item -> {
+            String itemTitle = item.getTitle().toString();
+            int position = mBookInfo.titles.indexOf(itemTitle);
+            //todo jump to the order size
+            return false;
         });
     }
 
@@ -146,5 +156,31 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
     private void updateAttachViewInfo(ChapterModel info) {
         //todo update the title
+    }
+
+    private void toggleMenuVisible() {
+        if(mHeadMenu.getVisibility() == View.VISIBLE) {
+            mHeadMenu.setVisibility(View.GONE);
+            mBottomMenu.setVisibility(View.GONE);
+        } else {
+            mHeadMenu.setVisibility(View.VISIBLE);
+            mBottomMenu.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void clickArea(int area) {
+        switch (area) {
+            case 1:
+
+                break;
+            case 2:
+                toggleMenuVisible();
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
     }
 }

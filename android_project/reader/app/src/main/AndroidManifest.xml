@@ -32,7 +32,9 @@
 
         <activity
             android:name=".activity.chapter.ChapterPageActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan"
+            >
             <intent-filter>
                 <action android:name="newbird.reader.page" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -96,6 +96,8 @@
         tools:visibility="visible"
         android:fitsSystemWindows="true"
         android:layout_gravity="start"
+        android:scrollbars="none"
+        app:menu="@menu/page_category_navigation"
         app:headerLayout="@layout/header_chapter_page_navi" />
 
 </android.support.v4.widget.DrawerLayout>

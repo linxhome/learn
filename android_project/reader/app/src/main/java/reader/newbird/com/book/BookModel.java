@@ -27,6 +27,7 @@ public class BookModel implements Parcelable {
         bookDir = in.readString();
         detail = in.readString();
         cover = in.readParcelable(Uri.class.getClassLoader());
+        titles = in.createStringArrayList();
     }
 
     public static final Creator<BookModel> CREATOR = new Creator<BookModel>() {
@@ -64,5 +65,6 @@ public class BookModel implements Parcelable {
         dest.writeString(bookDir);
         dest.writeString(detail);
         dest.writeParcelable(cover, flags);
+        dest.writeStringList(titles);
     }
 }

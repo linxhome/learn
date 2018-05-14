@@ -57,9 +57,9 @@ public class ZipBookParseTask implements Runnable {
             File info = new File(infoPath);
             File cover = new File(coverPath);
             File chapter = new File(chapterPath);
-            if (info.exists() && cover.exists() && chapter.exists()) {
+           /* if (info.exists() && cover.exists() && chapter.exists()) {
                 return;
-            }
+            }*/
         }
 
         ZipFile zipFile = null;
