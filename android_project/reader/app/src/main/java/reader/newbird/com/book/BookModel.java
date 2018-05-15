@@ -9,7 +9,7 @@ import java.util.List;
 
 public class BookModel implements Parcelable {
     public String bookName;
-    public List<String> chapterPaths;
+    public List<String> chapterFiles;
     public String authorName;
     public String bookDir;//书籍存储的目录
     public String detail;
@@ -22,7 +22,7 @@ public class BookModel implements Parcelable {
 
     protected BookModel(Parcel in) {
         bookName = in.readString();
-        chapterPaths = in.createStringArrayList();
+        chapterFiles = in.createStringArrayList();
         authorName = in.readString();
         bookDir = in.readString();
         detail = in.readString();
@@ -48,7 +48,7 @@ public class BookModel implements Parcelable {
 
 
     public boolean isValid() {
-        return !TextUtils.isEmpty(bookName) && chapterPaths != null;
+        return !TextUtils.isEmpty(bookName) && chapterFiles != null;
     }
 
 
@@ -60,7 +60,7 @@ public class BookModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(bookName);
-        dest.writeStringList(chapterPaths);
+        dest.writeStringList(chapterFiles);
         dest.writeString(authorName);
         dest.writeString(bookDir);
         dest.writeString(detail);

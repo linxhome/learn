@@ -3,25 +3,22 @@ package reader.newbird.com.activity.chapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import reader.newbird.com.R;
-import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.chapter.ChapterModel;
 import reader.newbird.com.chapter.ChapterPresenter;
@@ -38,10 +35,17 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private TextView mChapterTitle;
     private View mSettingIcon;
     private NavigationView mDrawerNavi;
+    private DrawerLayout mDrawerLayout;
+
+    private View mBottomCategoryBtn;
+    private View mBottomProgressBtn;
+    private View mBottomSettingBtn;
+    private View mBottomFontBtn;
 
     private int mCurrentChapterSeq;
     private BookModel mBookInfo;
     private ChapterPresenter mDataPresenter;
+    private ChapterModel[] mCacheChapterInfo = new ChapterModel[3];
 
     private PageAdapter mPageAdapter;
 
@@ -57,6 +61,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     }
 
     private void initView() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mPageRecyclerView = (RecyclerView) findViewById(R.id.page_list);
         mHeadMenu = findViewById(R.id.menu_header);
         mBottomMenu = findViewById(R.id.menu_bottom);
@@ -66,6 +71,11 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDrawerNavi = (NavigationView) findViewById(R.id.content_navi);
         mChapterTitle = (TextView) mHeadMenu.findViewById(R.id.chapter_title);
         mBackPress = mHeadMenu.findViewById(R.id.back_press);
+
+        mBottomCategoryBtn = findViewById(R.id.category_bottom_btn);
+        mBottomFontBtn = findViewById(R.id.font_bottom_btn);
+        mBottomProgressBtn = findViewById(R.id.progress_bottom_btn);
+        mBottomSettingBtn = findViewById(R.id.setting_bottom_btn);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mPageRecyclerView);
@@ -86,7 +96,32 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             finish();
         });
 
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
 
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                hideMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+
+        mBottomCategoryBtn.setOnClickListener(v -> {
+            hideMenu();
+            showDrawer();
+        });
     }
 
     private void initData() {
@@ -97,12 +132,11 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             finish();
             return;
         }
-        mCurrentChapterSeq = intent.getIntExtra(IntentConstant.PARAM_CHAPTER_ID, 0);
+        int chapterSeq = intent.getIntExtra(IntentConstant.PARAM_CHAPTER_ID, 0);
         mDataPresenter = new ChapterPresenter(this, mBookInfo);
         mDataPresenter.setViewCallback(this);
-        mDataPresenter.getChapterModel(mCurrentChapterSeq);
+        jumpToChapter(chapterSeq);
 
-        mChapterTitle.setText(mBookInfo.bookName);
     }
 
     //初始化目录
@@ -117,13 +151,13 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         TextView bookText = (TextView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_book_name);
         bookText.setText(mBookInfo.bookName);
 
-        if (mBookInfo.titles == null || mBookInfo.chapterPaths == null) {
+        if (mBookInfo.titles == null || mBookInfo.chapterFiles == null) {
             return;
         }
-        int chapterSize = mBookInfo.chapterPaths.size();
+        int chapterSize = mBookInfo.chapterFiles.size();
         int titleSize = mBookInfo.titles.size();
         if (chapterSize > titleSize) {
-            mBookInfo.chapterPaths = mBookInfo.chapterPaths.subList(0, titleSize);
+            mBookInfo.chapterFiles = mBookInfo.chapterFiles.subList(0, titleSize);
         } else if (chapterSize < titleSize) {
             mBookInfo.titles = mBookInfo.titles.subList(0, chapterSize);
         }
@@ -139,8 +173,10 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         }
         mDrawerNavi.setNavigationItemSelectedListener(item -> {
             String itemTitle = item.getTitle().toString();
-            int position = mBookInfo.titles.indexOf(itemTitle);
-            //todo jump to the order size
+            int chapterSeq = mBookInfo.titles.indexOf(itemTitle) + 1;
+            jumpToChapter(chapterSeq);
+
+            mDrawerLayout.closeDrawer(mDrawerNavi);
             return false;
         });
     }
@@ -149,12 +185,58 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     public void onGetChapterInfo(ChapterModel chapterInfo) {
         if (chapterInfo != null) {
             mDataPresenter.getPages(chapterInfo, pages -> {
-                updateAttachViewInfo(chapterInfo);
-                int count = mPageAdapter.getItemCount();
-                mPageAdapter.appendData(pages);
-                mPageAdapter.notifyItemInserted(count);
+                if (chapterInfo.chapterSeq == mCurrentChapterSeq) {
+                    updateAttachViewInfo(chapterInfo);
+                    mPageAdapter.setData(pages);
+                    mPageAdapter.notifyDataSetChanged();
+
+                    //确保当前章节先加载
+                    prePreChapter();
+                    preNextChapter();
+                } else if (chapterInfo.chapterSeq > mCurrentChapterSeq) {
+                    int count = mPageAdapter.getItemCount();
+                    mPageAdapter.appendData(pages);
+                    mPageAdapter.notifyItemRangeInserted(count, pages.size());
+                } else if (chapterInfo.chapterSeq < mCurrentChapterSeq) {
+                    mPageAdapter.prependData(pages);
+                    mPageAdapter.notifyItemRangeInserted(0, pages.size());
+                }
+                chapterInfo.pageList = pages;
             });
         }
+    }
+
+    //章节切换
+    private void onChangeCurrentChapter(int seq) {
+        if (seq <= 0 || seq > mBookInfo.chapterFiles.size()) {
+            return;
+        }
+        mCurrentChapterSeq = seq;
+        //todo 超过三章范围内的数据都删除
+
+    }
+
+    private void jumpToChapter(int chapterSeq) {
+        mCurrentChapterSeq = chapterSeq;
+        mDataPresenter.getChapterModel(chapterSeq);
+    }
+
+    private void prePreChapter() {
+        int chapterSeq = mCurrentChapterSeq - 1;
+        int size = mBookInfo.chapterFiles.size();
+        if (chapterSeq <= 0 || chapterSeq > size) {
+            return;
+        }
+        mDataPresenter.getChapterModel(chapterSeq);
+    }
+
+    private void preNextChapter() {
+        int chapterSeq = mCurrentChapterSeq + 1;
+        int size = mBookInfo.chapterFiles.size();
+        if (chapterSeq <= 0 || chapterSeq > size) {
+            return;
+        }
+        mDataPresenter.getChapterModel(chapterSeq);
     }
 
     @Override
@@ -164,7 +246,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     }
 
     private void updateAttachViewInfo(ChapterModel info) {
-        //todo update the title
+        mChapterTitle.setText(info.title);
     }
 
     private void toggleMenuVisible() {
@@ -176,6 +258,16 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             mBottomMenu.setVisibility(View.VISIBLE);
         }
     }
+
+    private void showDrawer() {
+        mDrawerLayout.openDrawer(mDrawerNavi);
+    }
+
+    private void hideMenu() {
+        mHeadMenu.setVisibility(View.GONE);
+        mBottomMenu.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void clickArea(int area) {

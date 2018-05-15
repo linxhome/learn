@@ -22,7 +22,7 @@ public class ChapterModel {
         ChapterModel info =  new ChapterModel();
         info.bookModel = bookInfo;
         info.chapterSeq = chapterSeq;
-        info.chapterFileName = bookInfo.chapterPaths.get(chapterSeq > 0 ? chapterSeq - 1 : 0);
+        info.chapterFileName = bookInfo.chapterFiles.get(chapterSeq > 0 ? chapterSeq - 1 : 0);
         return info;
     }
 }

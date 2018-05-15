@@ -96,7 +96,7 @@ public class BookManager {
                         String b = o2.replace(BookManager.CHAPTER_FILE_SUFFIX, "");
                         return Integer.valueOf(a).compareTo(Integer.valueOf(b));
                     });
-                    bookModel.chapterPaths = chapterSeqs;
+                    bookModel.chapterFiles = chapterSeqs;
                 }
             }
         }

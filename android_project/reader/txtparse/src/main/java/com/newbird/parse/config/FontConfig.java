@@ -30,9 +30,9 @@ public class FontConfig {
         float scaleDensity = context.getResources().getDisplayMetrics().scaledDensity;
         config.fontSize = (int) (18 * scaleDensity);
         config.fontType = FontType.DEFAULT_TYPE;
-        config.lineGap = (int) (3 * scaleDensity);
-        config.verticalMargin = (int) (10 * scaleDensity);
-        config.horizonMargin = (int) (10 * scaleDensity);
+        config.lineGap = (int) (5 * scaleDensity);
+        config.verticalMargin = (int) (25 * scaleDensity);
+        config.horizonMargin = (int) (25 * scaleDensity);
         config.backgroundColor = ColorConfig.BackgroundColor.SHEEP_SKIN;
         config.textColor = ColorConfig.TextColor.STYLE_ONE;
 

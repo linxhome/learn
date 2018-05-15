@@ -28,7 +28,7 @@ public class ChapterPresenter implements IGetChapter {
         if (mBookInfo == null || !mBookInfo.isValid()) {
             return;
         }
-        if (seq > mBookInfo.chapterPaths.size()) {
+        if (seq > mBookInfo.chapterFiles.size()) {
             return;
         }
         ChapterManager.getChapterModel(mBookInfo, seq, this);

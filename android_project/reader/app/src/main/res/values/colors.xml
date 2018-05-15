@@ -9,4 +9,6 @@
     <color name="dark_grey">#666666</color>
     <color name="dim_grey">#eeeeee</color>
 
+    <color name="white">#ffffff</color>
+
 </resources>

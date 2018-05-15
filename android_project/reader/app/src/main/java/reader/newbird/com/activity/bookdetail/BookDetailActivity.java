@@ -66,7 +66,7 @@ public class BookDetailActivity extends AppCompatActivity {
         mAuthorView.setText(mBookData.authorName);
         mBookNameView.setText(mBookData.bookName);
         mDetailView.setText(mBookData.detail);
-        mAdapter.setData(mBookData.chapterPaths);
+        mAdapter.setData(mBookData.chapterFiles);
         mAdapter.setBookModel(mBookData);
     }
 
