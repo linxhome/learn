@@ -46,8 +46,8 @@ public class ZipBookParseTask implements Runnable {
     @Override
     public void run() {
         String bookPath = mOutputDir;
-        String infoPath = bookPath + File.separator + BookManager.INFO_PREFIX;
-        String coverPath = bookPath + File.separator + BookManager.COVER_PREFIX;
+        String infoPath = bookPath + File.separator + BookManager.INFO_FILE_NAME;
+        String coverPath = bookPath + File.separator + BookManager.COVER_FILE_NAME;
         String chapterPath = bookPath + File.separator + BookManager.CHAPTER_DIR;
 
         File bookDir = new File(bookPath);
@@ -57,22 +57,22 @@ public class ZipBookParseTask implements Runnable {
             File info = new File(infoPath);
             File cover = new File(coverPath);
             File chapter = new File(chapterPath);
-           /* if (info.exists() && cover.exists() && chapter.exists()) {
+            if (info.exists() && cover.exists() && chapter.exists()) {
                 return;
-            }*/
+            }
         }
 
         ZipFile zipFile = null;
         try {
-            zipFile = new ZipFile(mZipPath, "GBK");
+            zipFile = new ZipFile(mZipPath, "gb2312");
             Enumeration<ZipEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 InputStream entryInputStream = zipFile.getInputStream(entry);
-                if (entryName.startsWith(BookManager.COVER_PREFIX)) {
+                if (entryName.startsWith(BookManager.COVER_FILE_NAME)) {
                     FileUtils.putInputStream(entryInputStream, coverPath);
-                } else if (entryName.equals(BookManager.INFO_PREFIX)) {
+                } else if (entryName.equals(BookManager.INFO_FILE_NAME)) {
                     FileUtils.putInputStream(entryInputStream, infoPath);
                 } else if (entryName.endsWith(BookManager.TXT_SUFFIX)) {
                     parseToChapter(entryInputStream, chapterPath);

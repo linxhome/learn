@@ -12,18 +12,21 @@ import com.newbird.parse.core.NBParserCore;
 import com.newbird.parse.model.NBPage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import reader.newbird.com.R;
 import reader.newbird.com.chapter.ChapterPresenter;
 
 public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
     private List<NBPage> mData = new ArrayList<>();
-    private ChapterPresenter mPresenter;
     private PageClickListener mClickListener;
+    private ChapterPresenter mPresenter;
+    private HashMap<Integer, List<NBPage>> mLoadedChapter = new HashMap<>();
 
-    public PageAdapter(ChapterPresenter mPresenter) {
-        this.mPresenter = mPresenter;
+    public PageAdapter(ChapterPresenter presenter) {
+        this.mPresenter = presenter;
     }
 
     public void setClickListener(PageClickListener mClickListener) {
@@ -58,13 +61,13 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
                             int width = v.getWidth();
                             int leftLine = width / 3;
                             int rightLine = leftLine * 2;
-                            if(mClickListener != null) {
-                                if(x < leftLine) {
-                                    mClickListener.clickArea(1);
-                                } else if(x> rightLine) {
-                                    mClickListener.clickArea(3);
+                            if (mClickListener != null) {
+                                if (x < leftLine) {
+                                    mClickListener.clickArea(PageArea.HORIZONTAL_LEFT);
+                                } else if (x > rightLine) {
+                                    mClickListener.clickArea(PageArea.HORIZONTAL_RIGHT);
                                 } else {
-                                    mClickListener.clickArea(2);
+                                    mClickListener.clickArea(PageArea.HORIZONTAL_MIDDLE);
                                 }
                             }
                         }
@@ -81,17 +84,67 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         return mData.size();
     }
 
-    public void setData(List<NBPage> data) {
+    public List<NBPage> getLoadedPages(int chapterSeq) {
+        return mLoadedChapter.get(chapterSeq);
+    }
+
+    public int getItemPosition(NBPage page) {
+        return mData.indexOf(page);
+    }
+
+    public void setData(int chapterSeq, List<NBPage> data) {
+        mLoadedChapter.clear();
         mData.clear();
+
         mData.addAll(data);
+        mLoadedChapter.put(chapterSeq, data);
     }
 
-    public void appendData(List<NBPage> data) {
+    public void appendData(int chapterSeq, List<NBPage> data) {
         mData.addAll(data);
+        mLoadedChapter.put(chapterSeq, data);
     }
 
-    public void prependData(List<NBPage> data) {
+    public void prependData(int chapterSeq, List<NBPage> data) {
         mData.addAll(0, data);
+        mLoadedChapter.put(chapterSeq, data);
+    }
+
+    //移除某个范围之外的章节，包含参数代表的章节
+    public void removeChapterByRangeOut(int smallestSeq, int biggestSeq) {
+        if (smallestSeq > biggestSeq) {
+            return;
+        }
+        Set<Integer> seqs = mLoadedChapter.keySet();
+        for (int chapterSeq : seqs) {
+            if (chapterSeq >= biggestSeq || chapterSeq <= smallestSeq) {
+                List<NBPage> pages = mLoadedChapter.get(chapterSeq);
+                for (NBPage page : pages) {
+                    int position = mData.indexOf(page);
+                    if (position >= 0) {
+                        mData.remove(page);
+                        notifyItemRemoved(position);
+                    }
+                }
+            }
+        }
+    }
+
+    public int findChapterSeqByPosition(int position) {
+        if (position < 0 || position >= mData.size()) {
+            return -1;
+        }
+        NBPage currentPage = mData.get(position);
+        Set<Integer> seqs = mLoadedChapter.keySet();
+        for (int chapterSeq : seqs) {
+            List<NBPage> pages = mLoadedChapter.get(chapterSeq);
+            for (NBPage page : pages) {
+                if (page.equals(currentPage)) {
+                    return chapterSeq;
+                }
+            }
+        }
+        return -1;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

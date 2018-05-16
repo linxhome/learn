@@ -28,8 +28,8 @@ import reader.newbird.com.utils.Logs;
 public class BookManager {
     private static final String TAG = "BookManager";
 
-    public static final String COVER_PREFIX = "cover";//封面文件前缀
-    public static final String INFO_PREFIX = "info";//书籍详情文件前缀
+    public static final String COVER_FILE_NAME = "cover";//封面文件前缀
+    public static final String INFO_FILE_NAME = "info";//书籍详情文件前缀
 
     public static final String TXT_SUFFIX = ".txt";//书籍内容文件前缀
     public static final String CHAPTER_DIR = "chapters";//章节文件目录
@@ -67,9 +67,9 @@ public class BookManager {
         bookModel.bookDir = path;
         for (File file : files) {
             String filename = file.getName();
-            if (filename.equals(COVER_PREFIX)) {
-                bookModel.cover = Uri.parse("file:" + path + File.separator + COVER_PREFIX);
-            } else if (filename.equals(INFO_PREFIX)) {
+            if (filename.equals(COVER_FILE_NAME)) {
+                bookModel.cover = Uri.parse("file:" + path + File.separator + COVER_FILE_NAME);
+            } else if (filename.equals(INFO_FILE_NAME)) {
                 String infoJson = FileUtils.getContent(file.getAbsolutePath());
                 try {
                     JSONObject jsonObj = new JSONObject(infoJson);

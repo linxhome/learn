@@ -1,7 +1,9 @@
 package reader.newbird.com.chapter;
 
 import android.content.Context;
+import android.util.LruCache;
 
+import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.core.NBParseListener;
 import com.newbird.parse.core.NBParserCore;
 
@@ -11,8 +13,12 @@ public class ChapterPresenter implements IGetChapter {
     private BookModel mBookInfo;
     private IGetChapter mChapterPageView;
     private Context mContext;
+    private static final int CACHE_SIZE = 10;
+    private LruCache<Integer, ChapterModel> mCacheChapters = new LruCache<>(CACHE_SIZE);
+    private FontConfig mFontConfig;
 
-    public ChapterPresenter(Context context,BookModel mBookInfo) {
+
+    public ChapterPresenter(Context context, BookModel mBookInfo) {
         this.mContext = context;
         this.mBookInfo = mBookInfo;
     }
@@ -31,16 +37,35 @@ public class ChapterPresenter implements IGetChapter {
         if (seq > mBookInfo.chapterFiles.size()) {
             return;
         }
-        ChapterManager.getChapterModel(mBookInfo, seq, this);
+        ChapterModel cacheChapter = mCacheChapters.get(seq);
+        if (cacheChapter != null) {
+            onGetChapterInfo(cacheChapter);
+        } else {
+            ChapterManager.getChapterModel(mBookInfo, seq, this);
+        }
+    }
+
+
+    public FontConfig getFontConfig() {
+        //todo read from the db
+        if (mFontConfig == null) {
+            mFontConfig = FontConfig.defaultConfig(mContext);
+        }
+        return mFontConfig;
+    }
+
+    public void setFontConfig(FontConfig fontConfig) {
+        this.mFontConfig = fontConfig;
     }
 
 
     /**
      * 获得分页后的分页列表
+     *
      * @param chapterInfo
      */
-    public void getPages(ChapterModel chapterInfo,NBParseListener listener) {
-        NBParserCore.initDefault(mContext).setContent(chapterInfo.content).async().load(listener);
+    public void getPages(ChapterModel chapterInfo, NBParseListener listener) {
+        NBParserCore.init(getFontConfig()).setContent(chapterInfo.content).async().load(listener);
     }
 
     public void onDestroy() {
@@ -52,6 +77,9 @@ public class ChapterPresenter implements IGetChapter {
     public void onGetChapterInfo(ChapterModel chapterInfo) {
         if (mChapterPageView != null) {
             mChapterPageView.onGetChapterInfo(chapterInfo);
+        }
+        if (chapterInfo != null) {
+            mCacheChapters.put(chapterInfo.chapterSeq, chapterInfo);
         }
     }
 

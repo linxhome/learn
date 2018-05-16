@@ -1,7 +1,10 @@
 package reader.newbird.com.book;
 
+import com.newbird.parse.config.FontConfig;
+
 import java.util.List;
 
+import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.base.ThreadManager;
 
 /**
@@ -17,6 +20,7 @@ public class BookPresenter implements IGetBook {
         mFileManager = new BookManager();
     }
 
+
     public void getBook() {
         ThreadManager.getInstance().PostIOHandler(() -> {
             final List<BookModel> books = mFileManager.getLocalBooks();
@@ -25,6 +29,8 @@ public class BookPresenter implements IGetBook {
         //更新asset中的文件
         mFileManager.readAssetBook(this).executeOnExecutor(ThreadManager.getInstance().getIOThread());
     }
+
+
 
     @Override
     public void updateBook(BookModel data) {

@@ -13,6 +13,7 @@ public class NBPage {
     public List<NBLine> lines = new ArrayList<>();
     public FontConfig config;
     public String oriString;
+    public String chapterSeq;
 
     public void add(NBLine line) {
         lines.add(line);

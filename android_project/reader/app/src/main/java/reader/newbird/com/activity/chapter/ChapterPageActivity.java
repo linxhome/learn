@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.newbird.parse.model.NBPage;
+
+import java.util.List;
 
 import reader.newbird.com.R;
 import reader.newbird.com.book.BookModel;
@@ -33,7 +36,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private View mBottomMenu;
     private View mBackPress;
     private TextView mChapterTitle;
-    private View mSettingIcon;
     private NavigationView mDrawerNavi;
     private DrawerLayout mDrawerLayout;
 
@@ -45,10 +47,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private int mCurrentChapterSeq;
     private BookModel mBookInfo;
     private ChapterPresenter mDataPresenter;
-    private ChapterModel[] mCacheChapterInfo = new ChapterModel[3];
-
     private PageAdapter mPageAdapter;
-
+    private LinearLayoutManager mPageManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +67,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mBottomMenu = findViewById(R.id.menu_bottom);
         mBackPress = findViewById(R.id.back_press);
         mChapterTitle = (TextView) findViewById(R.id.chapter_title);
-        mSettingIcon = findViewById(R.id.setting_icon);
         mDrawerNavi = (NavigationView) findViewById(R.id.content_navi);
         mChapterTitle = (TextView) mHeadMenu.findViewById(R.id.chapter_title);
         mBackPress = mHeadMenu.findViewById(R.id.back_press);
@@ -82,20 +81,31 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mPageAdapter = new PageAdapter(mDataPresenter);
         mPageRecyclerView.setAdapter(mPageAdapter);
         mPageAdapter.setClickListener(this);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mPageRecyclerView.setLayoutManager(manager);
+        mPageManager = new LinearLayoutManager(this);
+        mPageManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mPageRecyclerView.setLayoutManager(mPageManager);
 
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            mHeadMenu.setVisibility(View.GONE);
-            mBottomMenu.setVisibility(View.GONE);
-        }, 3000);
+        mPageRecyclerView.setRecyclerListener(holder -> {
+            //todo here to recycle the bitmap
 
-        mBackPress.setOnClickListener(v -> {
-            finish();
         });
 
+        mPageRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    int position = mPageManager.findFirstCompletelyVisibleItemPosition();
+                    int chapterSeq = mPageAdapter.findChapterSeqByPosition(position);
+                    if (chapterSeq != mCurrentChapterSeq) {
+                        onCurrentChapterChange(chapterSeq);
+                    }
+                }
+            }
+        });
+
+
+        mBackPress.setOnClickListener(v -> finish());
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -122,6 +132,13 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             hideMenu();
             showDrawer();
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            mHeadMenu.setVisibility(View.GONE);
+            mBottomMenu.setVisibility(View.GONE);
+        }, 3000);
+
     }
 
     private void initData() {
@@ -136,7 +153,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDataPresenter = new ChapterPresenter(this, mBookInfo);
         mDataPresenter.setViewCallback(this);
         jumpToChapter(chapterSeq);
-
     }
 
     //初始化目录
@@ -184,44 +200,70 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     @Override
     public void onGetChapterInfo(ChapterModel chapterInfo) {
         if (chapterInfo != null) {
-            mDataPresenter.getPages(chapterInfo, pages -> {
-                if (chapterInfo.chapterSeq == mCurrentChapterSeq) {
-                    updateAttachViewInfo(chapterInfo);
-                    mPageAdapter.setData(pages);
-                    mPageAdapter.notifyDataSetChanged();
+            int chapterSeq = chapterInfo.chapterSeq;
 
-                    //确保当前章节先加载
-                    prePreChapter();
+            List<NBPage> loadedPages = mPageAdapter.getLoadedPages(chapterInfo.chapterSeq);
+            if (loadedPages != null) {
+                if (chapterSeq == mCurrentChapterSeq) {
+                    if (loadedPages.size() > 0) {
+                        int position = mPageAdapter.getItemPosition(loadedPages.get(0));
+                        if (position >= 0) {
+                            mPageRecyclerView.scrollToPosition(position);
+                        }
+                    }
                     preNextChapter();
-                } else if (chapterInfo.chapterSeq > mCurrentChapterSeq) {
-                    int count = mPageAdapter.getItemCount();
-                    mPageAdapter.appendData(pages);
-                    mPageAdapter.notifyItemRangeInserted(count, pages.size());
-                } else if (chapterInfo.chapterSeq < mCurrentChapterSeq) {
-                    mPageAdapter.prependData(pages);
-                    mPageAdapter.notifyItemRangeInserted(0, pages.size());
+                    preLastChapter();
                 }
-                chapterInfo.pageList = pages;
-            });
-        }
-    }
+            } else {
+                mDataPresenter.getPages(chapterInfo, pages -> {
+                    if (chapterSeq == mCurrentChapterSeq) {
+                        mChapterTitle.setText(chapterInfo.title);
+                        mPageAdapter.setData(chapterSeq, pages);
+                        mPageAdapter.notifyDataSetChanged();
 
-    //章节切换
-    private void onChangeCurrentChapter(int seq) {
-        if (seq <= 0 || seq > mBookInfo.chapterFiles.size()) {
-            return;
-        }
-        mCurrentChapterSeq = seq;
-        //todo 超过三章范围内的数据都删除
+                        //预加载前后一章
+                        preLastChapter();
+                        preNextChapter();
+                    } else if (chapterSeq == mCurrentChapterSeq + 1) {
+                        int count = mPageAdapter.getItemCount();
+                        mPageAdapter.appendData(chapterSeq, pages);
+                        mPageAdapter.notifyItemRangeInserted(count, pages.size());
 
+                        mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+                    } else if (chapterSeq == mCurrentChapterSeq - 1) {
+                        mPageAdapter.prependData(chapterSeq, pages);
+                        mPageAdapter.notifyItemRangeInserted(0, pages.size());
+
+                        mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+                    }
+                    chapterInfo.pageList = pages;
+                });
+            }
+        }
     }
 
     private void jumpToChapter(int chapterSeq) {
+        if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
+            return;
+        }
         mCurrentChapterSeq = chapterSeq;
         mDataPresenter.getChapterModel(chapterSeq);
+        mChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
     }
 
-    private void prePreChapter() {
+    //章节切换
+    private void onCurrentChapterChange(int chapterSeq) {
+        if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
+            return;
+        }
+        mCurrentChapterSeq = chapterSeq;
+        mChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
+        preNextChapter();
+        preLastChapter();
+    }
+
+    //预先拉取上一章节
+    private void preLastChapter() {
         int chapterSeq = mCurrentChapterSeq - 1;
         int size = mBookInfo.chapterFiles.size();
         if (chapterSeq <= 0 || chapterSeq > size) {
@@ -230,6 +272,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDataPresenter.getChapterModel(chapterSeq);
     }
 
+    //预先拉取下一章
     private void preNextChapter() {
         int chapterSeq = mCurrentChapterSeq + 1;
         int size = mBookInfo.chapterFiles.size();
@@ -243,10 +286,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     protected void onDestroy() {
         super.onDestroy();
         mDataPresenter.onDestroy();
-    }
-
-    private void updateAttachViewInfo(ChapterModel info) {
-        mChapterTitle.setText(info.title);
     }
 
     private void toggleMenuVisible() {
@@ -271,14 +310,16 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
     @Override
     public void clickArea(int area) {
+        int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         switch (area) {
-            case 1:
-
+            case PageArea.HORIZONTAL_LEFT:
+                mPageRecyclerView.scrollToPosition(position - 1);
                 break;
-            case 2:
+            case PageArea.HORIZONTAL_RIGHT:
+                mPageRecyclerView.scrollToPosition(position + 1);
+                break;
+            case PageArea.HORIZONTAL_MIDDLE:
                 toggleMenuVisible();
-                break;
-            case 3:
                 break;
             default:
                 break;
