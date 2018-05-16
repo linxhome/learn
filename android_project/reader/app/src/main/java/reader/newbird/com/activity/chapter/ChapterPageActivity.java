@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +44,12 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private View mBottomProgressBtn;
     private View mBottomSettingBtn;
     private View mBottomFontBtn;
+
+    //进度设置页
+    private TextView mSwitchChapterTitle;
+    private View mPreChapterBtn;
+    private View mNextChapterBtn;
+    private SeekBar mChapterSeekbar;
 
     private int mCurrentChapterSeq;
     private BookModel mBookInfo;
@@ -114,7 +121,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                hideMenu();
+                setMenuVisibility(View.GONE);
             }
 
             @Override
@@ -128,16 +135,18 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             }
         });
 
+        initSeekBarView();
+
         mBottomCategoryBtn.setOnClickListener(v -> {
-            hideMenu();
-            showDrawer();
+            //setMenuVisibility(View.GONE);
+            setSeekbarVisibility(View.GONE);
+            mDrawerLayout.openDrawer(mDrawerNavi);
         });
 
+        mBottomProgressBtn.setOnClickListener(v -> toggleSeekBarVisibility());
+
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            mHeadMenu.setVisibility(View.GONE);
-            mBottomMenu.setVisibility(View.GONE);
-        }, 3000);
+        handler.postDelayed(() -> setMenuVisibility(View.GONE), 3000);
 
     }
 
@@ -195,6 +204,57 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             mDrawerLayout.closeDrawer(mDrawerNavi);
             return false;
         });
+    }
+
+    //初始化进度设置view
+    private void initSeekBarView() {
+        mSwitchChapterTitle = (TextView) mBottomMenu.findViewById(R.id.switch_chapter_title);
+        mPreChapterBtn = mBottomMenu.findViewById(R.id.pre_chapter_btn);
+        mNextChapterBtn = mBottomMenu.findViewById(R.id.next_chapter_btn);
+        mChapterSeekbar = (SeekBar) mBottomMenu.findViewById(R.id.jump_chapter_seekbar);
+        setSeekbarVisibility(View.GONE);
+
+        mPreChapterBtn.setOnClickListener(v -> {
+            jumpToChapter(mCurrentChapterSeq - 1);
+            mSwitchChapterTitle.setText(mBookInfo.titles.get(mCurrentChapterSeq - 1));
+        });
+        mNextChapterBtn.setOnClickListener(v -> {
+            jumpToChapter(mCurrentChapterSeq + 1);
+            mSwitchChapterTitle.setText(mBookInfo.titles.get(mCurrentChapterSeq + 1));
+        });
+        mChapterSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mSwitchChapterTitle.setText(mBookInfo.titles.get(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                jumpToChapter(seekBar.getProgress() + 1);
+            }
+        });
+
+    }
+
+    private void toggleSeekBarVisibility() {
+        if (mChapterSeekbar.getVisibility() == View.GONE) {
+            setSeekbarVisibility(View.VISIBLE);
+            mChapterSeekbar.setMax(mBookInfo.chapterFiles.size() - 1);
+        } else {
+            setSeekbarVisibility(View.GONE);
+        }
+    }
+
+    private void setSeekbarVisibility(int visibility) {
+        mSwitchChapterTitle.setVisibility(visibility);
+        mPreChapterBtn.setVisibility(visibility);
+        mNextChapterBtn.setVisibility(visibility);
+        mChapterSeekbar.setVisibility(visibility);
     }
 
     @Override
@@ -290,21 +350,15 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
     private void toggleMenuVisible() {
         if (mHeadMenu.getVisibility() == View.VISIBLE) {
-            mHeadMenu.setVisibility(View.GONE);
-            mBottomMenu.setVisibility(View.GONE);
+            setMenuVisibility(View.GONE);
         } else {
-            mHeadMenu.setVisibility(View.VISIBLE);
-            mBottomMenu.setVisibility(View.VISIBLE);
+            setMenuVisibility(View.VISIBLE);
         }
     }
 
-    private void showDrawer() {
-        mDrawerLayout.openDrawer(mDrawerNavi);
-    }
-
-    private void hideMenu() {
-        mHeadMenu.setVisibility(View.GONE);
-        mBottomMenu.setVisibility(View.GONE);
+    private void setMenuVisibility(int visibility) {
+        mHeadMenu.setVisibility(visibility);
+        mBottomMenu.setVisibility(visibility);
     }
 
 
