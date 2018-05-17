@@ -15,6 +15,7 @@ public class NBParserTask implements Runnable {
 
     NBParserCore.AsyncResp asyncResp;
     NBParserCore.ParseWorker parseWrapper;
+    int startReadPosition = 0;
 
     public NBParserTask(NBParserCore.ParseWorker parseWrapper) {
         this.parseWrapper = parseWrapper;
@@ -25,23 +26,33 @@ public class NBParserTask implements Runnable {
         this.parseWrapper = parseWrapper;
     }
 
+    public NBParserTask(NBParserCore.AsyncResp asyncResp, NBParserCore.ParseWorker parseWrapper, int startReadPosition) {
+        this.asyncResp = asyncResp;
+        this.parseWrapper = parseWrapper;
+        this.startReadPosition = startReadPosition;
+    }
+
     @Override
     public void run() {
         if (asyncResp != null) {
-            asyncResp.setPages(createPages());
+            List<NBPage> leftPages = new ArrayList<>();
+            List<NBPage> rightPages = new ArrayList<>();
+            createPages(leftPages, rightPages);
+            asyncResp.setPages(rightPages, leftPages);
         }
     }
 
     /**
      * @return
      */
-    public List<NBPage> createPages() {
+    public void createPages(List<NBPage> rightPages, List<NBPage> leftPages) {
         String oriStr = parseWrapper.getOriString();
+        int length = oriStr.length();
         FontConfig config = parseWrapper.getConfig();
         NBMeasure measure = parseWrapper.getMeasure();
-        int length = oriStr.length();
-        int index = 0;
 
+        //正向解析
+        int index = startReadPosition;
         //区分标点，文字和换行符,多个换行符要合并
         List<NBWord> words = new ArrayList<>();
         NBWord word = null;
@@ -124,7 +135,6 @@ public class NBParserTask implements Runnable {
             page.add(lines.get(index));
             index++;
         }
-        return pages;
     }
 
     /**

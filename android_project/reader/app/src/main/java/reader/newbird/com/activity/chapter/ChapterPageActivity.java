@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newbird.parse.config.ColorConfig;
 import com.newbird.parse.config.FontConfig;
+import com.newbird.parse.core.NBParseListener;
 import com.newbird.parse.model.NBPage;
 
 import java.util.Arrays;
@@ -60,6 +61,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private SeekBar mFontSizeSeekBar;
 
     private int mCurrentChapterSeq;
+    private int mCurrentReadPosition;//当前阅读的位置
     private BookModel mBookInfo;
     private ChapterPresenter mDataPresenter;
     private PageAdapter mPageAdapter;
@@ -329,24 +331,17 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         });
     }
 
-    private void onChangeFontSize() {
-        //redraw the page
-        mPageAdapter.clear();
-        mDataPresenter.getChapterModel(mCurrentChapterSeq);
-
-    }
-
 
     @Override
     public void onGetChapterInfo(ChapterModel chapterInfo) {
         if (chapterInfo != null) {
+            chapterInfo.startReadPosition = chapterInfo.chapterSeq == mCurrentChapterSeq ? mCurrentReadPosition : 0;;
             requestPages(chapterInfo);
         }
     }
 
     private void requestPages(ChapterModel chapterInfo) {
         int chapterSeq = chapterInfo.chapterSeq;
-
         List<NBPage> loadedPages = mPageAdapter.getLoadedPages(chapterInfo.chapterSeq);
         if (loadedPages != null) {
             if (chapterSeq == mCurrentChapterSeq) {
@@ -360,10 +355,10 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                 preLastChapter();
             }
         } else {
-            mDataPresenter.getPages(chapterInfo, pages -> {
+            mDataPresenter.getPages(chapterInfo, (rightPages, leftPages) -> {
                 if (chapterSeq == mCurrentChapterSeq) {
                     mChapterTitle.setText(chapterInfo.title);
-                    mPageAdapter.setData(chapterSeq, pages);
+                    mPageAdapter.setData(chapterSeq, rightPages);
                     mPageAdapter.notifyDataSetChanged();
 
                     //预加载前后一章
@@ -371,17 +366,18 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                     preNextChapter();
                 } else if (chapterSeq == mCurrentChapterSeq + 1) {
                     int count = mPageAdapter.getItemCount();
-                    mPageAdapter.appendData(chapterSeq, pages);
-                    mPageAdapter.notifyItemRangeInserted(count, pages.size());
+                    mPageAdapter.appendData(chapterSeq, rightPages);
+                    mPageAdapter.notifyItemRangeInserted(count, rightPages.size());
 
                     mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
                 } else if (chapterSeq == mCurrentChapterSeq - 1) {
-                    mPageAdapter.prependData(chapterSeq, pages);
-                    mPageAdapter.notifyItemRangeInserted(0, pages.size());
+                    mPageAdapter.prependData(chapterSeq, rightPages);
+                    mPageAdapter.notifyItemRangeInserted(0, rightPages.size());
                     mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
                 }
-                chapterInfo.pageList = pages;
+                chapterInfo.pageList = rightPages;
             });
+
         }
     }
 
@@ -391,19 +387,26 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             return;
         }
         mCurrentChapterSeq = chapterSeq;
+        mCurrentReadPosition = 0;
         mDataPresenter.getChapterModel(chapterSeq);
         updateChapterTitle(chapterSeq);
     }
 
-    //章节切换
+    //章节swipe切换
     private void onCurrentChapterChange(int chapterSeq) {
         if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
             return;
         }
-        mCurrentChapterSeq = chapterSeq;
-        updateChapterTitle(chapterSeq);
-        preNextChapter();
-        preLastChapter();
+        if (chapterSeq != mCurrentChapterSeq) {
+            mCurrentChapterSeq = chapterSeq;
+            updateChapterTitle(chapterSeq);
+            preNextChapter();
+            preLastChapter();
+        }
+        //更新当前阅读位置
+        int position = mPageManager.findFirstCompletelyVisibleItemPosition();
+        NBPage currentPage = mPageAdapter.getPage(position);
+        mCurrentReadPosition = currentPage != null ? currentPage.getStartPosition() : 0;
     }
 
     private void updateChapterTitle(int chapterSeq) {
@@ -460,6 +463,12 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         int start = position - 2 >= 0 ? position - 2 : 0;
         int count = start + 4 > mBookInfo.titles.size() ? mBookInfo.titles.size() - start : 4;
         mPageAdapter.notifyItemRangeChanged(start, count);
+    }
+
+    private void onChangeFontSize() {
+        //redraw the page
+        mPageAdapter.clear();
+        mDataPresenter.getChapterModel(mCurrentChapterSeq);
     }
 
     @Override

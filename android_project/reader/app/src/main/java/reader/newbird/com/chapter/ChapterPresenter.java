@@ -65,7 +65,8 @@ public class ChapterPresenter implements IGetChapter {
      * @param chapterInfo
      */
     public void getPages(ChapterModel chapterInfo, NBParseListener listener) {
-        NBParserCore.init(getFontConfig()).setContent(chapterInfo.content).async().load(listener);
+        NBParserCore.init(getFontConfig()).setStartReadPosition(chapterInfo.startReadPosition)
+                .setContent(chapterInfo.content).async().into(listener);
     }
 
     public void onDestroy() {

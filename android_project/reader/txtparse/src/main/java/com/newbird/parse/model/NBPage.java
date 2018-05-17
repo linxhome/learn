@@ -19,4 +19,14 @@ public class NBPage {
         lines.add(line);
     }
 
+    //获得当前页首字母在章节中的位置
+    public int getStartPosition() {
+        if (lines != null && lines.size() > 0) {
+            List<NBWord> words = lines.get(0).getWords();
+            if (words != null && words.size() > 0) {
+                return words.get(0).position;
+            }
+        }
+        return -1;
+    }
 }

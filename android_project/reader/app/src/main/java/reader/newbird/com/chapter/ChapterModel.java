@@ -13,7 +13,7 @@ public class ChapterModel {
     public BookModel bookModel;//书籍相关信息
     public List<NBPage> pageList;//章节分页
     public String title;//章节标题
-    public String startReadPosition; //开始阅读的位置
+    public int startReadPosition = 0; //开始阅读的位置
     public int chapterSeq;//章节序号
     public String chapterFileName;//章节对应的文件名
     public String content;//章节内容

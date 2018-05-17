@@ -5,5 +5,5 @@ import com.newbird.parse.model.NBPage;
 import java.util.List;
 
 public interface NBParseListener {
-    void respPages(List<NBPage> pages);
+    void respPages(List<NBPage> rightPages,List<NBPage> leftPages);
 }
