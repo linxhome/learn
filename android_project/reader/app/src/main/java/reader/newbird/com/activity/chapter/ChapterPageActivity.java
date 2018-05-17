@@ -23,6 +23,7 @@ import com.newbird.parse.model.NBPage;
 import java.util.List;
 
 import reader.newbird.com.R;
+import reader.newbird.com.ViewCombineGroup;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.chapter.ChapterModel;
 import reader.newbird.com.chapter.ChapterPresenter;
@@ -49,7 +50,13 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private TextView mSwitchChapterTitle;
     private View mPreChapterBtn;
     private View mNextChapterBtn;
-    private SeekBar mChapterSeekbar;
+    private SeekBar mChapterSeekBar;
+
+    //
+    private ViewCombineGroup mMenuGroup;
+    private ViewCombineGroup mChapterSeekGroup;
+    private ViewCombineGroup mFontSetGroup;
+    private ViewCombineGroup mStyleSetGroup;
 
     private int mCurrentChapterSeq;
     private BookModel mBookInfo;
@@ -83,6 +90,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mBottomProgressBtn = findViewById(R.id.progress_bottom_btn);
         mBottomSettingBtn = findViewById(R.id.setting_bottom_btn);
 
+        mMenuGroup = ViewCombineGroup.createGroup(mHeadMenu, mBottomMenu);
+
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mPageRecyclerView);
         mPageAdapter = new PageAdapter(mDataPresenter);
@@ -107,6 +116,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                     if (chapterSeq != mCurrentChapterSeq) {
                         onCurrentChapterChange(chapterSeq);
                     }
+                } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    mMenuGroup.hide();
                 }
             }
         });
@@ -121,7 +132,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                setMenuVisibility(View.GONE);
+                mMenuGroup.hide();
             }
 
             @Override
@@ -138,15 +149,14 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         initSeekBarView();
 
         mBottomCategoryBtn.setOnClickListener(v -> {
-            //setMenuVisibility(View.GONE);
-            setSeekbarVisibility(View.GONE);
+            mMenuGroup.hide();
             mDrawerLayout.openDrawer(mDrawerNavi);
         });
 
         mBottomProgressBtn.setOnClickListener(v -> toggleSeekBarVisibility());
 
         Handler handler = new Handler();
-        handler.postDelayed(() -> setMenuVisibility(View.GONE), 3000);
+        handler.postDelayed(() -> mMenuGroup.hide(), 3000);
 
     }
 
@@ -211,18 +221,20 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mSwitchChapterTitle = (TextView) mBottomMenu.findViewById(R.id.switch_chapter_title);
         mPreChapterBtn = mBottomMenu.findViewById(R.id.pre_chapter_btn);
         mNextChapterBtn = mBottomMenu.findViewById(R.id.next_chapter_btn);
-        mChapterSeekbar = (SeekBar) mBottomMenu.findViewById(R.id.jump_chapter_seekbar);
-        setSeekbarVisibility(View.GONE);
+        mChapterSeekBar = (SeekBar) mBottomMenu.findViewById(R.id.jump_chapter_seekbar);
+
+        mChapterSeekGroup = ViewCombineGroup.createGroup(mSwitchChapterTitle, mPreChapterBtn, mNextChapterBtn, mChapterSeekBar);
+        mChapterSeekGroup.hide();
+        mMenuGroup.addChild(mChapterSeekGroup);
 
         mPreChapterBtn.setOnClickListener(v -> {
             jumpToChapter(mCurrentChapterSeq - 1);
-            mSwitchChapterTitle.setText(mBookInfo.titles.get(mCurrentChapterSeq - 1));
         });
         mNextChapterBtn.setOnClickListener(v -> {
             jumpToChapter(mCurrentChapterSeq + 1);
-            mSwitchChapterTitle.setText(mBookInfo.titles.get(mCurrentChapterSeq + 1));
         });
-        mChapterSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        mChapterSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mSwitchChapterTitle.setText(mBookInfo.titles.get(progress));
@@ -238,23 +250,11 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                 jumpToChapter(seekBar.getProgress() + 1);
             }
         });
-
     }
 
     private void toggleSeekBarVisibility() {
-        if (mChapterSeekbar.getVisibility() == View.GONE) {
-            setSeekbarVisibility(View.VISIBLE);
-            mChapterSeekbar.setMax(mBookInfo.chapterFiles.size() - 1);
-        } else {
-            setSeekbarVisibility(View.GONE);
-        }
-    }
-
-    private void setSeekbarVisibility(int visibility) {
-        mSwitchChapterTitle.setVisibility(visibility);
-        mPreChapterBtn.setVisibility(visibility);
-        mNextChapterBtn.setVisibility(visibility);
-        mChapterSeekbar.setVisibility(visibility);
+        mChapterSeekGroup.toggleShow();
+        mChapterSeekBar.setMax(mBookInfo.chapterFiles.size() - 1);
     }
 
     @Override
@@ -308,7 +308,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         }
         mCurrentChapterSeq = chapterSeq;
         mDataPresenter.getChapterModel(chapterSeq);
-        mChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
+        updateChapterTitle(chapterSeq);
     }
 
     //章节切换
@@ -317,9 +317,14 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             return;
         }
         mCurrentChapterSeq = chapterSeq;
-        mChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
+        updateChapterTitle(chapterSeq);
         preNextChapter();
         preLastChapter();
+    }
+
+    private void updateChapterTitle(int chapterSeq) {
+        mChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
+        mSwitchChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
     }
 
     //预先拉取上一章节
@@ -346,19 +351,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     protected void onDestroy() {
         super.onDestroy();
         mDataPresenter.onDestroy();
-    }
-
-    private void toggleMenuVisible() {
-        if (mHeadMenu.getVisibility() == View.VISIBLE) {
-            setMenuVisibility(View.GONE);
-        } else {
-            setMenuVisibility(View.VISIBLE);
-        }
-    }
-
-    private void setMenuVisibility(int visibility) {
-        mHeadMenu.setVisibility(visibility);
-        mBottomMenu.setVisibility(visibility);
+        mMenuGroup.recycle();
+        mChapterSeekGroup.recycle();
     }
 
 
@@ -367,13 +361,17 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         switch (area) {
             case PageArea.HORIZONTAL_LEFT:
-                mPageRecyclerView.scrollToPosition(position - 1);
+                if (position - 1 >= 0) {
+                    mPageRecyclerView.smoothScrollToPosition(position - 1);
+                }
                 break;
             case PageArea.HORIZONTAL_RIGHT:
-                mPageRecyclerView.scrollToPosition(position + 1);
+                if (position + 1 < mPageAdapter.getItemCount()) {
+                    mPageRecyclerView.smoothScrollToPosition(position + 1);
+                }
                 break;
             case PageArea.HORIZONTAL_MIDDLE:
-                toggleMenuVisible();
+                mMenuGroup.toggleShow();
                 break;
             default:
                 break;
