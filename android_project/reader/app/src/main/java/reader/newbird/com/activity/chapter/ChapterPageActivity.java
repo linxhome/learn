@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.newbird.parse.config.ColorConfig;
+import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.model.NBPage;
 
 import java.util.Arrays;
@@ -273,7 +274,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mColorSelectListView.setLayoutManager(layoutManager);
-        mColorSetGroup = ViewCombineGroup.createGroup(mColorSelectListView,titleView);
+        mColorSetGroup = ViewCombineGroup.createGroup(mColorSelectListView, titleView);
         mMenuGroup.addChild(mColorSetGroup);
         mColorSetGroup.hide();
 
@@ -294,53 +295,96 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mFontSetGroup = ViewCombineGroup.createGroup(mSmallerFontBtn, mLargerFontBtn, mFontSizeSeekBar);
         mMenuGroup.addChild(mFontSetGroup);
         mFontSetGroup.hide();
+
+        mFontSizeSeekBar.setMax(FontConfig.MAX_FONT_SIZE_SP - FontConfig.MIN_FINT_SIZE_SP);
+        mSmallerFontBtn.setOnClickListener(v -> {
+            int newSize = mDataPresenter.getFontConfig().incrFontSize();
+            onChangeFontSize();
+            mFontSizeSeekBar.setProgress(newSize + FontConfig.MIN_FINT_SIZE_SP);
+        });
+
+        mLargerFontBtn.setOnClickListener(v -> {
+            int newSize = mDataPresenter.getFontConfig().descrFontSize();
+            onChangeFontSize();
+            mFontSizeSeekBar.setProgress(newSize + FontConfig.MIN_FINT_SIZE_SP);
+        });
+
+        mFontSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                mDataPresenter.getFontConfig().setFontSizeSp(progress + FontConfig.MIN_FINT_SIZE_SP);
+                onChangeFontSize();
+            }
+        });
+    }
+
+    private void onChangeFontSize() {
+        //redraw the page
+        mPageAdapter.clear();
+        mDataPresenter.getChapterModel(mCurrentChapterSeq);
+
     }
 
 
     @Override
     public void onGetChapterInfo(ChapterModel chapterInfo) {
         if (chapterInfo != null) {
-            int chapterSeq = chapterInfo.chapterSeq;
-
-            List<NBPage> loadedPages = mPageAdapter.getLoadedPages(chapterInfo.chapterSeq);
-            if (loadedPages != null) {
-                if (chapterSeq == mCurrentChapterSeq) {
-                    if (loadedPages.size() > 0) {
-                        int position = mPageAdapter.getItemPosition(loadedPages.get(0));
-                        if (position >= 0) {
-                            mPageRecyclerView.scrollToPosition(position);
-                        }
-                    }
-                    preNextChapter();
-                    preLastChapter();
-                }
-            } else {
-                mDataPresenter.getPages(chapterInfo, pages -> {
-                    if (chapterSeq == mCurrentChapterSeq) {
-                        mChapterTitle.setText(chapterInfo.title);
-                        mPageAdapter.setData(chapterSeq, pages);
-                        mPageAdapter.notifyDataSetChanged();
-
-                        //预加载前后一章
-                        preLastChapter();
-                        preNextChapter();
-                    } else if (chapterSeq == mCurrentChapterSeq + 1) {
-                        int count = mPageAdapter.getItemCount();
-                        mPageAdapter.appendData(chapterSeq, pages);
-                        mPageAdapter.notifyItemRangeInserted(count, pages.size());
-
-                        mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
-                    } else if (chapterSeq == mCurrentChapterSeq - 1) {
-                        mPageAdapter.prependData(chapterSeq, pages);
-                        mPageAdapter.notifyItemRangeInserted(0, pages.size());
-
-                        mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
-                    }
-                    chapterInfo.pageList = pages;
-                });
-            }
+            requestPages(chapterInfo);
         }
     }
+
+    private void requestPages(ChapterModel chapterInfo) {
+        int chapterSeq = chapterInfo.chapterSeq;
+
+        List<NBPage> loadedPages = mPageAdapter.getLoadedPages(chapterInfo.chapterSeq);
+        if (loadedPages != null) {
+            if (chapterSeq == mCurrentChapterSeq) {
+                if (loadedPages.size() > 0) {
+                    int position = mPageAdapter.getItemPosition(loadedPages.get(0));
+                    if (position >= 0) {
+                        mPageRecyclerView.scrollToPosition(position);
+                    }
+                }
+                preNextChapter();
+                preLastChapter();
+            }
+        } else {
+            mDataPresenter.getPages(chapterInfo, pages -> {
+                if (chapterSeq == mCurrentChapterSeq) {
+                    mChapterTitle.setText(chapterInfo.title);
+                    mPageAdapter.setData(chapterSeq, pages);
+                    mPageAdapter.notifyDataSetChanged();
+
+                    //预加载前后一章
+                    preLastChapter();
+                    preNextChapter();
+                } else if (chapterSeq == mCurrentChapterSeq + 1) {
+                    int count = mPageAdapter.getItemCount();
+                    mPageAdapter.appendData(chapterSeq, pages);
+                    mPageAdapter.notifyItemRangeInserted(count, pages.size());
+
+                    mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+                } else if (chapterSeq == mCurrentChapterSeq - 1) {
+                    mPageAdapter.prependData(chapterSeq, pages);
+                    mPageAdapter.notifyItemRangeInserted(0, pages.size());
+                    mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+                }
+                chapterInfo.pageList = pages;
+            });
+        }
+    }
+
 
     private void jumpToChapter(int chapterSeq) {
         if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
@@ -388,15 +432,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mDataPresenter.onDestroy();
-        mMenuGroup.recycle();
-        mChapterSeekGroup.recycle();
-    }
-
-
-    @Override
     public void clickArea(int area) {
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         switch (area) {
@@ -425,6 +460,15 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         int start = position - 2 >= 0 ? position - 2 : 0;
         int count = start + 4 > mBookInfo.titles.size() ? mBookInfo.titles.size() - start : 4;
         mPageAdapter.notifyItemRangeChanged(start, count);
-
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDataPresenter.onDestroy();
+        mMenuGroup.recycle();
+        mChapterSeekGroup.recycle();
+    }
+
+
 }

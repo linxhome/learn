@@ -92,6 +92,14 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         return mData.indexOf(page);
     }
 
+    public NBPage getPage(int position) {
+        if (position >= 0 && position < getItemCount()) {
+            return mData.get(position);
+        } else {
+            return null;
+        }
+    }
+
     public void setData(int chapterSeq, List<NBPage> data) {
         mLoadedChapter.clear();
         mData.clear();
