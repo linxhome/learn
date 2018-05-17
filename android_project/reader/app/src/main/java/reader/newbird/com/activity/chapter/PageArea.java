@@ -1,7 +1,7 @@
 package reader.newbird.com.activity.chapter;
 
 /**
- * Created by dai on 2018/5/16.
+ * Created by bird on 2018/5/16.
  * Comment:
  */
 public class PageArea {

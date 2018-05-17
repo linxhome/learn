@@ -110,6 +110,11 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         mLoadedChapter.put(chapterSeq, data);
     }
 
+    public void clear() {
+        mData.clear();
+        mLoadedChapter.clear();
+    }
+
     //移除某个范围之外的章节，包含参数代表的章节
     public void removeChapterByRangeOut(int smallestSeq, int biggestSeq) {
         if (smallestSeq > biggestSeq) {

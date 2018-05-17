@@ -18,45 +18,45 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.newbird.parse.config.ColorConfig;
 import com.newbird.parse.model.NBPage;
 
+import java.util.Arrays;
 import java.util.List;
 
 import reader.newbird.com.R;
-import reader.newbird.com.ViewCombineGroup;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.chapter.ChapterModel;
 import reader.newbird.com.chapter.ChapterPresenter;
 import reader.newbird.com.chapter.IGetChapter;
 import reader.newbird.com.config.IntentConstant;
 import reader.newbird.com.utils.Logs;
+import reader.newbird.com.view.ViewCombineGroup;
 
-public class ChapterPageActivity extends AppCompatActivity implements IGetChapter, PageClickListener {
+public class ChapterPageActivity extends AppCompatActivity implements IGetChapter, PageClickListener, ColorStyleAdapter.ColorStyleListener {
 
     private RecyclerView mPageRecyclerView;
-    private View mHeadMenu;
     private View mBottomMenu;
-    private View mBackPress;
+    private View mHeadMenu;
     private TextView mChapterTitle;
-    private NavigationView mDrawerNavi;
+    private NavigationView mDrawerNavigation;
     private DrawerLayout mDrawerLayout;
 
-    private View mBottomCategoryBtn;
-    private View mBottomProgressBtn;
-    private View mBottomSettingBtn;
-    private View mBottomFontBtn;
-
-    //进度设置页
-    private TextView mSwitchChapterTitle;
-    private View mPreChapterBtn;
-    private View mNextChapterBtn;
-    private SeekBar mChapterSeekBar;
-
-    //
     private ViewCombineGroup mMenuGroup;
     private ViewCombineGroup mChapterSeekGroup;
     private ViewCombineGroup mFontSetGroup;
-    private ViewCombineGroup mStyleSetGroup;
+    private ViewCombineGroup mColorSetGroup;
+
+    //进度设置页
+    private TextView mSwitchChapterTitle;
+
+    //背景颜色选择
+    private RecyclerView mColorSelectListView;
+
+    //字体大小选择
+    private View mSmallerFontBtn;
+    private View mLargerFontBtn;
+    private SeekBar mFontSizeSeekBar;
 
     private int mCurrentChapterSeq;
     private BookModel mBookInfo;
@@ -69,9 +69,32 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_chapter_page);
-        initView();
+
         initData();
-        initCategory();
+        initView();
+        initDrawer();
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mPageAdapter.getItemCount() <= 0) {
+            jumpToChapter(mCurrentChapterSeq);
+        }
+    }
+
+    private void initData() {
+        Intent intent = getIntent();
+        mBookInfo = intent.getParcelableExtra(IntentConstant.PARCEL_BOOK_MODEL);
+        if (mBookInfo == null) {
+            Logs.e("ChapterPageActivity", "empty book");
+            finish();
+            return;
+        }
+        mCurrentChapterSeq = intent.getIntExtra(IntentConstant.PARAM_CHAPTER_ID, 1);
+        mDataPresenter = new ChapterPresenter(this, mBookInfo);
+        mDataPresenter.setViewCallback(this);
     }
 
     private void initView() {
@@ -79,18 +102,16 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mPageRecyclerView = (RecyclerView) findViewById(R.id.page_list);
         mHeadMenu = findViewById(R.id.menu_header);
         mBottomMenu = findViewById(R.id.menu_bottom);
-        mBackPress = findViewById(R.id.back_press);
         mChapterTitle = (TextView) findViewById(R.id.chapter_title);
-        mDrawerNavi = (NavigationView) findViewById(R.id.content_navi);
+        mDrawerNavigation = (NavigationView) findViewById(R.id.content_navi);
         mChapterTitle = (TextView) mHeadMenu.findViewById(R.id.chapter_title);
-        mBackPress = mHeadMenu.findViewById(R.id.back_press);
-
-        mBottomCategoryBtn = findViewById(R.id.category_bottom_btn);
-        mBottomFontBtn = findViewById(R.id.font_bottom_btn);
-        mBottomProgressBtn = findViewById(R.id.progress_bottom_btn);
-        mBottomSettingBtn = findViewById(R.id.setting_bottom_btn);
-
         mMenuGroup = ViewCombineGroup.createGroup(mHeadMenu, mBottomMenu);
+
+        View backPress = mHeadMenu.findViewById(R.id.back_press);
+        View bottomCategoryBtn = findViewById(R.id.category_bottom_btn);
+        View bottomFontBtn = findViewById(R.id.font_bottom_btn);
+        View bottomProgressBtn = findViewById(R.id.progress_bottom_btn);
+        View bottomStyleBtn = findViewById(R.id.setting_bottom_btn);
 
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(mPageRecyclerView);
@@ -122,8 +143,70 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             }
         });
 
+        backPress.setOnClickListener(v -> finish());
 
-        mBackPress.setOnClickListener(v -> finish());
+        bottomCategoryBtn.setOnClickListener(v -> {
+            mMenuGroup.hide();
+            mDrawerLayout.openDrawer(mDrawerNavigation);
+        });
+
+        initChapterSeekBar();
+        bottomProgressBtn.setOnClickListener(v -> mChapterSeekGroup.toggleShow());
+
+        initColorSelector();
+        bottomStyleBtn.setOnClickListener(v -> mColorSetGroup.toggleShow());
+
+        initFontSizeSelect();
+        bottomFontBtn.setOnClickListener(v -> mFontSetGroup.toggleShow());
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> mMenuGroup.hide(), 3000);
+
+    }
+
+
+    //初始化抽屉目录
+    private void initDrawer() {
+        if (mBookInfo == null) {
+            return;
+        }
+        ImageView cover = (ImageView) mDrawerNavigation.getHeaderView(0).findViewById(R.id.item_cover);
+        Glide.with(this).load(mBookInfo.cover).into(cover);
+        TextView authorText = (TextView) mDrawerNavigation.getHeaderView(0).findViewById(R.id.item_author_name);
+        authorText.setText(mBookInfo.authorName);
+        TextView bookText = (TextView) mDrawerNavigation.getHeaderView(0).findViewById(R.id.item_book_name);
+        bookText.setText(mBookInfo.bookName);
+
+        if (mBookInfo.titles == null || mBookInfo.chapterFiles == null) {
+            return;
+        }
+        int chapterSize = mBookInfo.chapterFiles.size();
+        int titleSize = mBookInfo.titles.size();
+        if (chapterSize > titleSize) {
+            mBookInfo.chapterFiles = mBookInfo.chapterFiles.subList(0, titleSize);
+        } else if (chapterSize < titleSize) {
+            mBookInfo.titles = mBookInfo.titles.subList(0, chapterSize);
+        }
+
+        NavigationMenuView navigationMenuView = (NavigationMenuView) mDrawerNavigation.getChildAt(0);
+        if (navigationMenuView != null) {
+            navigationMenuView.setVerticalScrollBarEnabled(false);
+        }
+
+        mDrawerNavigation.getMenu().clear();
+        for (String title : mBookInfo.titles) {
+            mDrawerNavigation.getMenu().add(title);
+        }
+
+        mDrawerNavigation.setNavigationItemSelectedListener(item -> {
+            String itemTitle = item.getTitle().toString();
+            int chapterSeq = mBookInfo.titles.indexOf(itemTitle) + 1;
+            jumpToChapter(chapterSeq);
+
+            mDrawerLayout.closeDrawer(mDrawerNavigation);
+            return false;
+        });
+
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -145,96 +228,27 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
             }
         });
-
-        initSeekBarView();
-
-        mBottomCategoryBtn.setOnClickListener(v -> {
-            mMenuGroup.hide();
-            mDrawerLayout.openDrawer(mDrawerNavi);
-        });
-
-        mBottomProgressBtn.setOnClickListener(v -> toggleSeekBarVisibility());
-
-        Handler handler = new Handler();
-        handler.postDelayed(() -> mMenuGroup.hide(), 3000);
-
-    }
-
-    private void initData() {
-        Intent intent = getIntent();
-        mBookInfo = intent.getParcelableExtra(IntentConstant.PARCEL_BOOK_MODEL);
-        if (mBookInfo == null) {
-            Logs.e("ChapterPageActivity", "empty book");
-            finish();
-            return;
-        }
-        int chapterSeq = intent.getIntExtra(IntentConstant.PARAM_CHAPTER_ID, 0);
-        mDataPresenter = new ChapterPresenter(this, mBookInfo);
-        mDataPresenter.setViewCallback(this);
-        jumpToChapter(chapterSeq);
-    }
-
-    //初始化目录
-    private void initCategory() {
-        if (mBookInfo == null) {
-            return;
-        }
-        ImageView cover = (ImageView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_cover);
-        Glide.with(this).load(mBookInfo.cover).into(cover);
-        TextView authorText = (TextView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_author_name);
-        authorText.setText(mBookInfo.authorName);
-        TextView bookText = (TextView) mDrawerNavi.getHeaderView(0).findViewById(R.id.item_book_name);
-        bookText.setText(mBookInfo.bookName);
-
-        if (mBookInfo.titles == null || mBookInfo.chapterFiles == null) {
-            return;
-        }
-        int chapterSize = mBookInfo.chapterFiles.size();
-        int titleSize = mBookInfo.titles.size();
-        if (chapterSize > titleSize) {
-            mBookInfo.chapterFiles = mBookInfo.chapterFiles.subList(0, titleSize);
-        } else if (chapterSize < titleSize) {
-            mBookInfo.titles = mBookInfo.titles.subList(0, chapterSize);
-        }
-
-        NavigationMenuView navigationMenuView = (NavigationMenuView) mDrawerNavi.getChildAt(0);
-        if (navigationMenuView != null) {
-            navigationMenuView.setVerticalScrollBarEnabled(false);
-        }
-
-        mDrawerNavi.getMenu().clear();
-        for (String title : mBookInfo.titles) {
-            mDrawerNavi.getMenu().add(title);
-        }
-        mDrawerNavi.setNavigationItemSelectedListener(item -> {
-            String itemTitle = item.getTitle().toString();
-            int chapterSeq = mBookInfo.titles.indexOf(itemTitle) + 1;
-            jumpToChapter(chapterSeq);
-
-            mDrawerLayout.closeDrawer(mDrawerNavi);
-            return false;
-        });
     }
 
     //初始化进度设置view
-    private void initSeekBarView() {
+    private void initChapterSeekBar() {
         mSwitchChapterTitle = (TextView) mBottomMenu.findViewById(R.id.switch_chapter_title);
-        mPreChapterBtn = mBottomMenu.findViewById(R.id.pre_chapter_btn);
-        mNextChapterBtn = mBottomMenu.findViewById(R.id.next_chapter_btn);
-        mChapterSeekBar = (SeekBar) mBottomMenu.findViewById(R.id.jump_chapter_seekbar);
+        View preChapterBtn = mBottomMenu.findViewById(R.id.pre_chapter_btn);
+        View nextChapterBtn = mBottomMenu.findViewById(R.id.next_chapter_btn);
+        SeekBar chapterSeekBar = (SeekBar) mBottomMenu.findViewById(R.id.jump_chapter_seekbar);
 
-        mChapterSeekGroup = ViewCombineGroup.createGroup(mSwitchChapterTitle, mPreChapterBtn, mNextChapterBtn, mChapterSeekBar);
-        mChapterSeekGroup.hide();
+        mChapterSeekGroup = ViewCombineGroup.createGroup(mSwitchChapterTitle, preChapterBtn, nextChapterBtn, chapterSeekBar);
         mMenuGroup.addChild(mChapterSeekGroup);
+        mChapterSeekGroup.hide();
 
-        mPreChapterBtn.setOnClickListener(v -> {
+        preChapterBtn.setOnClickListener(v -> {
             jumpToChapter(mCurrentChapterSeq - 1);
         });
-        mNextChapterBtn.setOnClickListener(v -> {
+        nextChapterBtn.setOnClickListener(v -> {
             jumpToChapter(mCurrentChapterSeq + 1);
         });
 
-        mChapterSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        chapterSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mSwitchChapterTitle.setText(mBookInfo.titles.get(progress));
@@ -250,12 +264,38 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                 jumpToChapter(seekBar.getProgress() + 1);
             }
         });
+        chapterSeekBar.setMax(mBookInfo.chapterFiles.size() - 1);
     }
 
-    private void toggleSeekBarVisibility() {
-        mChapterSeekGroup.toggleShow();
-        mChapterSeekBar.setMax(mBookInfo.chapterFiles.size() - 1);
+    private void initColorSelector() {
+        mColorSelectListView = (RecyclerView) findViewById(R.id.background_selector);
+        View titleView = findViewById(R.id.background_title);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mColorSelectListView.setLayoutManager(layoutManager);
+        mColorSetGroup = ViewCombineGroup.createGroup(mColorSelectListView,titleView);
+        mMenuGroup.addChild(mColorSetGroup);
+        mColorSetGroup.hide();
+
+        //init
+        Integer[] colorList = new Integer[]{ColorConfig.BackgroundColor.DIM_GREEN
+                , ColorConfig.BackgroundColor.DIM_GREY
+                , ColorConfig.BackgroundColor.SHEEP_SKIN
+                , ColorConfig.BackgroundColor.STYLE_NIGHT};
+        ColorStyleAdapter colorStyleAdapter = new ColorStyleAdapter(mDataPresenter.getFontConfig().backgroundColor, this);
+        colorStyleAdapter.setColors(Arrays.asList(colorList));
+        mColorSelectListView.setAdapter(colorStyleAdapter);
     }
+
+    private void initFontSizeSelect() {
+        mSmallerFontBtn = findViewById(R.id.smaller_font);
+        mLargerFontBtn = findViewById(R.id.larger_font);
+        mFontSizeSeekBar = (SeekBar) findViewById(R.id.font_size_seekbar);
+        mFontSetGroup = ViewCombineGroup.createGroup(mSmallerFontBtn, mLargerFontBtn, mFontSizeSeekBar);
+        mMenuGroup.addChild(mFontSetGroup);
+        mFontSetGroup.hide();
+    }
+
 
     @Override
     public void onGetChapterInfo(ChapterModel chapterInfo) {
@@ -376,5 +416,15 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onColorStyleChange(int newColor) {
+        mDataPresenter.getFontConfig().backgroundColor = newColor;
+        int position = mPageManager.findFirstCompletelyVisibleItemPosition();
+        int start = position - 2 >= 0 ? position - 2 : 0;
+        int count = start + 4 > mBookInfo.titles.size() ? mBookInfo.titles.size() - start : 4;
+        mPageAdapter.notifyItemRangeChanged(start, count);
+
     }
 }

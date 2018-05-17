@@ -1,10 +1,7 @@
 package reader.newbird.com.book;
 
-import com.newbird.parse.config.FontConfig;
-
 import java.util.List;
 
-import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.base.ThreadManager;
 
 /**

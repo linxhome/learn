@@ -21,10 +21,6 @@ public class ChapterManager {
     }
 
 
-    public static void parsePages(ChapterModel chapterInfo, IGetChapter callback) {
-        new PageParseTask(callback).executeOnExecutor(ThreadManager.getInstance().getIOThread(), chapterInfo);
-    }
-
     static class BaseChapterParesTask extends AsyncTask<ChapterModel, Integer, ChapterModel> {
 
         private IGetChapter mDataObservable;
@@ -68,21 +64,6 @@ public class ChapterManager {
             //todo parseChapterToList
             return null;
         }
-    }
-
-    static class PageParseTask extends AsyncTask<ChapterModel, Integer, ChapterModel> {
-        private IGetChapter mDataObservable;
-
-        public PageParseTask(IGetChapter mDataObservable) {
-            this.mDataObservable = mDataObservable;
-        }
-
-        @Override
-        protected ChapterModel doInBackground(ChapterModel... chapterModels) {
-            return null;
-        }
-
-
     }
 
 

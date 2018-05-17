@@ -49,8 +49,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:paddingTop="10dp"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:paddingTop="15dp">
 
             <ImageView
                 android:id="@+id/category_bottom_btn"
@@ -91,18 +91,19 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginRight="40dp"
                 android:src="@drawable/menu_icon_vote_nor"
-
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/setting_bottom_btn"
                 app:layout_constraintRight_toRightOf="parent" />
 
+
+            <!-- 进度条控制 -->
             <TextView
                 android:id="@+id/pre_chapter_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="63dp"
-                android:layout_marginLeft="40dp"
-                android:text="上一章"
+                android:layout_marginStart="20dp"
+                android:text="@string/last_chapter"
                 android:textColor="@color/colorPrimary"
                 android:textSize="13dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -129,8 +130,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="63dp"
-                android:layout_marginRight="40dp"
-                android:text="下一章"
+                android:layout_marginEnd="20dp"
+                android:text="@string/next_chapter"
                 android:textColor="@color/colorPrimary"
                 android:textSize="13dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -151,6 +152,79 @@
                 app:layout_constraintRight_toRightOf="parent"
                 tools:text="当前章节标题"
                 tools:visibility="gone" />
+
+            <!-- 背景颜色选择 -->
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/background_selector"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginBottom="63dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:contentDescription="背景颜色选择"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="gone" />
+
+            <TextView
+                android:id="@+id/background_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@id/background_selector"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="选择背景色"
+                tools:visibility="gone" />
+
+
+            <!-- 字体设置-->
+            <TextView
+                android:id="@+id/smaller_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="63dp"
+                android:layout_marginStart="20dp"
+                android:text="A-"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/font_size_seekbar"
+                tools:visibility="gone" />
+
+            <SeekBar
+                android:id="@+id/font_size_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:thumb="@drawable/seekbar_thumb_drawable"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="8"
+                app:layout_constraintLeft_toLeftOf="@id/smaller_font"
+                app:layout_constraintRight_toLeftOf="@+id/larger_font"
+                tools:visibility="gone" />
+
+            <TextView
+                android:id="@+id/larger_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="63dp"
+                android:layout_marginEnd="20dp"
+                android:text="A+"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@id/font_size_seekbar"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:visibility="gone" />
+
         </android.support.constraint.ConstraintLayout>
 
 

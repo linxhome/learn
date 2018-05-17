@@ -1,4 +1,4 @@
-package reader.newbird.com;
+package reader.newbird.com.view;
 
 import android.view.View;
 
@@ -14,7 +14,7 @@ public class ViewCombineGroup {
 
     private List<View> mGroups;
 
-    //存在树依赖关系的viewgroup，父show 子不动,父hide 子全部 hide;兄show 弟hide;兄hide 弟不动；
+    //存在树依赖关系的view group，父show 子不动,父hide 子全部 hide;兄show 弟hide;兄hide 弟不动；
     private List<ViewCombineGroup> mChildren;
     private ViewCombineGroup mParent;
 
@@ -28,9 +28,13 @@ public class ViewCombineGroup {
     }
 
     public void recycle() {
-        mChildren.clear();
+        if (mChildren != null) {
+            mChildren.clear();
+        }
         mParent = null;
-        mGroups.clear();
+        if (mGroups != null) {
+            mGroups.clear();
+        }
     }
 
 
@@ -46,7 +50,7 @@ public class ViewCombineGroup {
     }
 
     //父show 子不动;兄show 弟hide;子show的前提是父是show
-    public void show() {
+    private void show() {
         if (mParent != null) {
             if (!mParent.isShow()) {
                 return;
@@ -80,7 +84,7 @@ public class ViewCombineGroup {
         }
     }
 
-    public boolean isShow() {
+    private boolean isShow() {
         if (mGroups != null && mGroups.size() > 0) {
             return mGroups.get(0).getVisibility() == View.VISIBLE;
         }
