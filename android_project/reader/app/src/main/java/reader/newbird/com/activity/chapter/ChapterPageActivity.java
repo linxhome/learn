@@ -470,7 +470,8 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mDataPresenter.getFontConfig().setBackgroundColor(newColor);
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         int start = position - 2 >= 0 ? position - 2 : 0;
-        int count = start + 4 > mBookInfo.titles.size() ? mBookInfo.titles.size() - start : 4;
+        int pageSize = mPageAdapter.getItemCount();
+        int count = start + 4 > pageSize ? pageSize - start : 4;
         mPageAdapter.notifyItemRangeChanged(start, count);
     }
 
