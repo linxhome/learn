@@ -13,7 +13,7 @@ public class NBPage {
     public List<NBLine> lines = new ArrayList<>();
     public FontConfig config;
     public String oriString;
-    public String chapterSeq;
+
 
     public void add(NBLine line) {
         lines.add(line);
@@ -29,4 +29,16 @@ public class NBPage {
         }
         return -1;
     }
+
+    //获得未字母在章节中的位置
+    public int getEndPosition() {
+        if (lines != null && lines.size() > 0) {
+            NBLine line = lines.get(lines.size() - 1);
+            List<NBWord> words = line == null ? null : line.getWords();
+            return words != null && words.size() > 0 ? words.get(words.size() - 1).position : -1;
+        }
+        return -1;
+    }
+
+
 }

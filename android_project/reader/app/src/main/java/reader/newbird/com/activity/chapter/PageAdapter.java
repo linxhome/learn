@@ -84,12 +84,21 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         return mData.size();
     }
 
-    public List<NBPage> getLoadedPages(int chapterSeq) {
-        return mLoadedChapter.get(chapterSeq);
+
+    public boolean hasLoaded(int chapterSeq) {
+        List<NBPage> pages = mLoadedChapter.get(chapterSeq);
+        return pages != null && !pages.isEmpty();
     }
 
-    public int getItemPosition(NBPage page) {
-        return mData.indexOf(page);
+
+    //获得章节首页的位置
+    public int getPositionByChapterSeq(int chapterSeq) {
+        List<NBPage> pages = mLoadedChapter.get(chapterSeq);
+        if (pages != null && !pages.isEmpty()) {
+            return mData.indexOf(pages.get(0));
+        } else {
+            return -1;
+        }
     }
 
     public NBPage getPage(int position) {
@@ -98,6 +107,23 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         } else {
             return null;
         }
+    }
+
+    public int findChapterSeqByPosition(int position) {
+        if (position < 0 || position >= mData.size()) {
+            return -1;
+        }
+        NBPage currentPage = mData.get(position);
+        Set<Integer> seqs = mLoadedChapter.keySet();
+        for (int chapterSeq : seqs) {
+            List<NBPage> pages = mLoadedChapter.get(chapterSeq);
+            for (NBPage page : pages) {
+                if (page.equals(currentPage)) {
+                    return chapterSeq;
+                }
+            }
+        }
+        return -1;
     }
 
     public void setData(int chapterSeq, List<NBPage> data) {
@@ -143,22 +169,6 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
         }
     }
 
-    public int findChapterSeqByPosition(int position) {
-        if (position < 0 || position >= mData.size()) {
-            return -1;
-        }
-        NBPage currentPage = mData.get(position);
-        Set<Integer> seqs = mLoadedChapter.keySet();
-        for (int chapterSeq : seqs) {
-            List<NBPage> pages = mLoadedChapter.get(chapterSeq);
-            for (NBPage page : pages) {
-                if (page.equals(currentPage)) {
-                    return chapterSeq;
-                }
-            }
-        }
-        return -1;
-    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView pageView;

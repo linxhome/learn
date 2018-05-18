@@ -20,11 +20,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newbird.parse.config.ColorConfig;
 import com.newbird.parse.config.FontConfig;
-import com.newbird.parse.core.NBParseListener;
 import com.newbird.parse.model.NBPage;
 
 import java.util.Arrays;
-import java.util.List;
 
 import reader.newbird.com.R;
 import reader.newbird.com.book.BookModel;
@@ -61,11 +59,12 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private SeekBar mFontSizeSeekBar;
 
     private int mCurrentChapterSeq;
-    private int mCurrentReadPosition;//当前阅读的位置
+    private int mReadPositionOfChapter;//当前阅读的位置，index标识的是在整个章节字符串中的位置
     private BookModel mBookInfo;
     private ChapterPresenter mDataPresenter;
     private PageAdapter mPageAdapter;
     private LinearLayoutManager mPageManager;
+    private static final String TAG = "ChapterPageActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -334,65 +333,92 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
     @Override
     public void onGetChapterInfo(ChapterModel chapterInfo) {
-        if (chapterInfo != null) {
-            chapterInfo.startReadPosition = chapterInfo.chapterSeq == mCurrentChapterSeq ? mCurrentReadPosition : 0;;
-            requestPages(chapterInfo);
+        if (chapterInfo == null) {
+            return;
         }
-    }
-
-    private void requestPages(ChapterModel chapterInfo) {
         int chapterSeq = chapterInfo.chapterSeq;
-        List<NBPage> loadedPages = mPageAdapter.getLoadedPages(chapterInfo.chapterSeq);
-        if (loadedPages != null) {
+        if (mCurrentChapterSeq == chapterInfo.chapterSeq) {
+            chapterInfo.startReadPosition = mReadPositionOfChapter;
+        }
+
+        mDataPresenter.getPages(chapterInfo, rightPages -> {
             if (chapterSeq == mCurrentChapterSeq) {
-                if (loadedPages.size() > 0) {
-                    int position = mPageAdapter.getItemPosition(loadedPages.get(0));
-                    if (position >= 0) {
-                        mPageRecyclerView.scrollToPosition(position);
+                mChapterTitle.setText(chapterInfo.title);
+                mPageAdapter.setData(chapterSeq, rightPages);
+                mPageAdapter.notifyDataSetChanged();
+
+                int scrollTo = -1;
+                int size = rightPages.size();
+                int startReadPosition = chapterInfo.startReadPosition;
+                for (int index = 1; index < size; index++) {
+                    NBPage ipage = rightPages.get(index);
+                    if (startReadPosition >= ipage.getStartPosition() && startReadPosition <= ipage.getEndPosition()) {
+                        scrollTo = index;
+                        break;
                     }
                 }
-                preNextChapter();
-                preLastChapter();
-            }
-        } else {
-            mDataPresenter.getPages(chapterInfo, (rightPages, leftPages) -> {
-                if (chapterSeq == mCurrentChapterSeq) {
-                    mChapterTitle.setText(chapterInfo.title);
-                    mPageAdapter.setData(chapterSeq, rightPages);
-                    mPageAdapter.notifyDataSetChanged();
-
-                    //预加载前后一章
-                    preLastChapter();
-                    preNextChapter();
-                } else if (chapterSeq == mCurrentChapterSeq + 1) {
-                    int count = mPageAdapter.getItemCount();
-                    mPageAdapter.appendData(chapterSeq, rightPages);
-                    mPageAdapter.notifyItemRangeInserted(count, rightPages.size());
-
-                    mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
-                } else if (chapterSeq == mCurrentChapterSeq - 1) {
-                    mPageAdapter.prependData(chapterSeq, rightPages);
-                    mPageAdapter.notifyItemRangeInserted(0, rightPages.size());
-                    mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+                if (scrollTo >= 0 && scrollTo <= size) {
+                    mPageRecyclerView.scrollToPosition(scrollTo);
                 }
-                chapterInfo.pageList = rightPages;
-            });
 
-        }
+                //预加载前后一章
+                preLoadChapter(mCurrentChapterSeq + 1);
+                preLoadChapter(mCurrentChapterSeq - 1);
+            } else if (chapterSeq == mCurrentChapterSeq + 1) {
+                int count = mPageAdapter.getItemCount();
+                mPageAdapter.appendData(chapterSeq, rightPages);
+                mPageAdapter.notifyItemRangeInserted(count, rightPages.size());
+
+                mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+            } else if (chapterSeq == mCurrentChapterSeq - 1) {
+                mPageAdapter.prependData(chapterSeq, rightPages);
+                mPageAdapter.notifyItemRangeInserted(0, rightPages.size());
+                mPageAdapter.removeChapterByRangeOut(mCurrentChapterSeq - 3, mCurrentChapterSeq + 3);
+            }
+            chapterInfo.pageList = rightPages;
+        });
+
     }
 
-
+    //点击跳转章节
     private void jumpToChapter(int chapterSeq) {
         if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
             return;
         }
+        //参数更新
         mCurrentChapterSeq = chapterSeq;
-        mCurrentReadPosition = 0;
-        mDataPresenter.getChapterModel(chapterSeq);
+        mReadPositionOfChapter = 0;
         updateChapterTitle(chapterSeq);
+
+        if (mPageAdapter.hasLoaded(chapterSeq)) {
+            //如果请求的是已加载，则需要跳到该章节的第一页
+            int position = mPageAdapter.getPositionByChapterSeq(chapterSeq);
+            if (position >= 0) {
+                mPageRecyclerView.scrollToPosition(position);
+            }
+            //前后章不完备，预加载一下
+            preLoadChapter(mCurrentChapterSeq + 1);
+            preLoadChapter(mCurrentChapterSeq - 1);
+        } else {
+            mDataPresenter.getChapterModel(chapterSeq);
+        }
     }
 
-    //章节swipe切换
+    //预加载章节
+    private void preLoadChapter(int chapterSeq) {
+        int size = mBookInfo.chapterFiles.size();
+        if (chapterSeq <= 0 || chapterSeq > size) {
+            return;
+        }
+        if (!mPageAdapter.hasLoaded(chapterSeq)) {
+            mDataPresenter.getChapterModel(chapterSeq);
+        } else {
+            Logs.i(TAG, "has load chapter " + chapterSeq);
+        }
+    }
+
+
+    //swipe切换章节
     private void onCurrentChapterChange(int chapterSeq) {
         if (chapterSeq <= 0 || chapterSeq > mBookInfo.chapterFiles.size()) {
             return;
@@ -400,13 +426,13 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         if (chapterSeq != mCurrentChapterSeq) {
             mCurrentChapterSeq = chapterSeq;
             updateChapterTitle(chapterSeq);
-            preNextChapter();
-            preLastChapter();
+            preLoadChapter(mCurrentChapterSeq + 1);
+            preLoadChapter(mCurrentChapterSeq - 1);
         }
         //更新当前阅读位置
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         NBPage currentPage = mPageAdapter.getPage(position);
-        mCurrentReadPosition = currentPage != null ? currentPage.getStartPosition() : 0;
+        mReadPositionOfChapter = currentPage != null ? currentPage.getStartPosition() : 0;
     }
 
     private void updateChapterTitle(int chapterSeq) {
@@ -414,25 +440,6 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         mSwitchChapterTitle.setText(mBookInfo.titles.get(chapterSeq - 1));
     }
 
-    //预先拉取上一章节
-    private void preLastChapter() {
-        int chapterSeq = mCurrentChapterSeq - 1;
-        int size = mBookInfo.chapterFiles.size();
-        if (chapterSeq <= 0 || chapterSeq > size) {
-            return;
-        }
-        mDataPresenter.getChapterModel(chapterSeq);
-    }
-
-    //预先拉取下一章
-    private void preNextChapter() {
-        int chapterSeq = mCurrentChapterSeq + 1;
-        int size = mBookInfo.chapterFiles.size();
-        if (chapterSeq <= 0 || chapterSeq > size) {
-            return;
-        }
-        mDataPresenter.getChapterModel(chapterSeq);
-    }
 
     @Override
     public void clickArea(int area) {

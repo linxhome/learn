@@ -13,49 +13,47 @@ import java.util.List;
 
 public class NBParserTask implements Runnable {
 
-    NBParserCore.AsyncResp asyncResp;
-    NBParserCore.ParseWorker parseWrapper;
-    int startReadPosition = 0;
+    private NBParserCore.AsyncResp mAsyncResp;
+    private NBParserCore.ParseWorker mParseWrapper;
+    private int mStartReadPosition = 0;
 
     public NBParserTask(NBParserCore.ParseWorker parseWrapper) {
-        this.parseWrapper = parseWrapper;
+        this.mParseWrapper = parseWrapper;
     }
 
     public NBParserTask(NBParserCore.AsyncResp asyncResp, NBParserCore.ParseWorker parseWrapper) {
-        this.asyncResp = asyncResp;
-        this.parseWrapper = parseWrapper;
+        this.mAsyncResp = asyncResp;
+        this.mParseWrapper = parseWrapper;
     }
 
     public NBParserTask(NBParserCore.AsyncResp asyncResp, NBParserCore.ParseWorker parseWrapper, int startReadPosition) {
-        this.asyncResp = asyncResp;
-        this.parseWrapper = parseWrapper;
-        this.startReadPosition = startReadPosition;
+        this.mAsyncResp = asyncResp;
+        this.mParseWrapper = parseWrapper;
+        this.mStartReadPosition = startReadPosition;
     }
 
     @Override
     public void run() {
-        if (asyncResp != null) {
-            List<NBPage> leftPages = new ArrayList<>();
-            List<NBPage> rightPages = new ArrayList<>();
-            createPages(leftPages, rightPages);
-            asyncResp.setPages(rightPages, leftPages);
+        if (mAsyncResp != null) {
+            mAsyncResp.setPages(createPages());
         }
     }
 
     /**
-     * @return
+     * @return 开始阅读的位置
      */
-    public void createPages(List<NBPage> rightPages, List<NBPage> leftPages) {
-        String oriStr = parseWrapper.getOriString();
+    public List<NBPage> createPages() {
+
+        String oriStr = mParseWrapper.getOriString();
         int length = oriStr.length();
-        FontConfig config = parseWrapper.getConfig();
-        NBMeasure measure = parseWrapper.getMeasure();
+        FontConfig config = mParseWrapper.getConfig();
+        NBMeasure measure = mParseWrapper.getMeasure();
 
         //正向解析
-        int index = startReadPosition;
-        //区分标点，文字和换行符,多个换行符要合并
+        int index = 0;
         List<NBWord> words = new ArrayList<>();
         NBWord word = null;
+        //区分标点，文字和换行符,多个换行符要合并
         while (index < length) {
             char character = oriStr.charAt(index);
             if (index > 1 && isEnterLine(oriStr.charAt(index - 1))) {
@@ -95,13 +93,13 @@ public class NBParserTask implements Runnable {
             if (word1 == null) {
                 continue;
             }
-            char currentChar = oriStr.charAt(word1.position);
             TextMeasureSize size = measure.getSize(oriStr, config, word1.position, word1.position + 1);
-            word1.measureWidth = size.width;
+            word1.textWidth = word1.measureWidth = size.width;
             if (word1.isParagraphHead) {
-                word1.measureWidth += spaceWidth;
+                word1.measureWidth += size.width + spaceWidth;
             }
-            if (isEnterLine(currentChar)) {
+
+            if (isEnterLine(oriStr.charAt(word1.position))) {
                 newLine.append(word1);
                 newLine = new NBLine();
                 remainWid = areaWidth;
@@ -135,6 +133,8 @@ public class NBParserTask implements Runnable {
             page.add(lines.get(index));
             index++;
         }
+
+        return pages;
     }
 
     /**

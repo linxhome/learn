@@ -9,7 +9,6 @@ import com.newbird.parse.config.FontConfig;
 import com.newbird.parse.model.NBPage;
 import com.newbird.parse.task.NBParserTask;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,7 +67,7 @@ public class NBParserCore {
             this.mOrgString = mOrgString;
             this.startReadPosition = startReadPosition;
 
-            if (mOrgString == null || startReadPosition > mOrgString.length()) {
+            if (mOrgString == null || startReadPosition >= mOrgString.length()) {
                 this.startReadPosition = 0;
             }
         }
@@ -119,11 +118,11 @@ public class NBParserCore {
             mListener = listener;
         }
 
-        public void setPages(final List<NBPage> list, final List<NBPage> leftList) {
+        public void setPages(final List<NBPage> list) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mListener.respPages(list, leftList);
+                    mListener.respPages(list);
                 }
             });
         }

@@ -8,6 +8,7 @@ public class NBWord {
     public int position;
     public int measureWidth;
     public int textWidth;
+
     public boolean isParagraphHead; //是否段落开头
     public boolean isLineHead;
 
