@@ -20,13 +20,14 @@ public class FontConfig {
     public int verticalMargin;//竖直页边距
     public int contentWidth;
     public int contentHeight;
-    public int backgroundColor;
+    private int mBackgroundColor;
     public int textColor;
 
 
     enum FontType {
         DEFAULT_TYPE, SIMPLE, YAHEI
     }
+
     public static final int MAX_FONT_SIZE_SP = 25;
     public static final int MIN_FINT_SIZE_SP = 12;
 
@@ -59,6 +60,16 @@ public class FontConfig {
         return fontSizeSp;
     }
 
+    public int getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
+    public void setBackgroundColor(int backgroundColor) {
+        mBackgroundColor = backgroundColor;
+        if (mBackgroundColor == ColorConfig.BackgroundColor.STYLE_NIGHT) {
+            textColor = ColorConfig.TextColor.STYLE_TWO;
+        }
+    }
 
     public static FontConfig defaultConfig(Context context) {
         FontConfig config = new FontConfig(context);
@@ -69,7 +80,7 @@ public class FontConfig {
         config.lineGap = (int) (5 * scaleDensity);
         config.verticalMargin = (int) (25 * scaleDensity);
         config.horizonMargin = (int) (25 * scaleDensity);
-        config.backgroundColor = ColorConfig.BackgroundColor.SHEEP_SKIN;
+        config.mBackgroundColor = ColorConfig.BackgroundColor.SHEEP_SKIN;
         config.textColor = ColorConfig.TextColor.STYLE_ONE;
 
         WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);

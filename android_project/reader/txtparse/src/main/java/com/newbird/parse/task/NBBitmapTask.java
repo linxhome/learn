@@ -34,11 +34,11 @@ public class NBBitmapTask implements Runnable {
     public Bitmap create() {
         Bitmap bitmap = Bitmap.createBitmap(mConfig.contentWidth , mConfig.contentHeight, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(mConfig.getBackgroundColor());
+
         Paint paint = new Paint();
         paint.setTextSize(mConfig.fontSize);
-        paint.setColor(mConfig.textColor);
         paint.setAntiAlias(true);
-        canvas.drawColor(mConfig.backgroundColor);
         float height = paint.descent() - paint.ascent();
         float drawPosY = height + mConfig.verticalMargin;
         float drawPosX = mConfig.horizonMargin;

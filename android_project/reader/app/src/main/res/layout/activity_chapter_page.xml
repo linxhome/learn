@@ -174,6 +174,7 @@
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="13sp"
+                android:text="@string/select_background"
                 app:layout_constraintBottom_toTopOf="@id/background_selector"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

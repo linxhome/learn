@@ -139,6 +139,11 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                     if (chapterSeq != mCurrentChapterSeq) {
                         onCurrentChapterChange(chapterSeq);
                     }
+
+                    //更新当前阅读位置
+                    NBPage currentPage = mPageAdapter.getPage(position);
+                    mReadPositionOfChapter = currentPage != null ? currentPage.getStartPosition() : 0;
+
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     mMenuGroup.hide();
                 }
@@ -284,7 +289,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
                 , ColorConfig.BackgroundColor.DIM_GREY
                 , ColorConfig.BackgroundColor.SHEEP_SKIN
                 , ColorConfig.BackgroundColor.STYLE_NIGHT};
-        ColorStyleAdapter colorStyleAdapter = new ColorStyleAdapter(mDataPresenter.getFontConfig().backgroundColor, this);
+        ColorStyleAdapter colorStyleAdapter = new ColorStyleAdapter(mDataPresenter.getFontConfig().getBackgroundColor(), this);
         colorStyleAdapter.setColors(Arrays.asList(colorList));
         mColorSelectListView.setAdapter(colorStyleAdapter);
     }
@@ -429,10 +434,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
             preLoadChapter(mCurrentChapterSeq + 1);
             preLoadChapter(mCurrentChapterSeq - 1);
         }
-        //更新当前阅读位置
-        int position = mPageManager.findFirstCompletelyVisibleItemPosition();
-        NBPage currentPage = mPageAdapter.getPage(position);
-        mReadPositionOfChapter = currentPage != null ? currentPage.getStartPosition() : 0;
+
     }
 
     private void updateChapterTitle(int chapterSeq) {
@@ -465,7 +467,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
 
     @Override
     public void onColorStyleChange(int newColor) {
-        mDataPresenter.getFontConfig().backgroundColor = newColor;
+        mDataPresenter.getFontConfig().setBackgroundColor(newColor);
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         int start = position - 2 >= 0 ? position - 2 : 0;
         int count = start + 4 > mBookInfo.titles.size() ? mBookInfo.titles.size() - start : 4;
