@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reader.newbird.com.R;
+import reader.newbird.com.activity.chapter.ChapterPageActivity;
 import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.config.IntentConstant;
@@ -46,7 +47,11 @@ public class BookShelfRecyclerAdapter extends RecyclerView.Adapter<BookShelfRecy
         Glide.with(ReaderContext.getInstance().get()).load(holder.mItem.cover).into(holder.coverView);
 
         holder.mView.setOnClickListener(v -> {
-            //todo goto the reader
+            Intent intent = new Intent();
+            intent.setClass(mActivity.getBaseContext(), ChapterPageActivity.class);
+            intent.putExtra(IntentConstant.PARCEL_BOOK_MODEL,holder.mItem);
+            intent.putExtra(IntentConstant.PARAM_CHAPTER_ID,1);
+            mActivity.startActivity(intent);
 
         });
         holder.mView.setOnLongClickListener(v -> {
