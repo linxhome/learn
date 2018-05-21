@@ -1,4 +1,7 @@
 .DS_Store
 android_project/CategoryExample/.idea
 android_project/reader/.idea
+android_project/reader/.gitignore
+android_project/reader/.idea
+
 
