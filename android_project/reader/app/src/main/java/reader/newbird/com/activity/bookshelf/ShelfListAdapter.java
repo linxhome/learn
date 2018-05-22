@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reader.newbird.com.R;
-import reader.newbird.com.activity.chapter.ChapterPageActivity;
+import reader.newbird.com.activity.chapter.PageActivity;
 import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.book.BookModel;
 import reader.newbird.com.config.IntentConstant;
@@ -23,12 +23,12 @@ import reader.newbird.com.config.IntentConstant;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link BookModel} and makes a call to the
  */
-public class BookShelfRecyclerAdapter extends RecyclerView.Adapter<BookShelfRecyclerAdapter.ViewHolder> {
+public class ShelfListAdapter extends RecyclerView.Adapter<ShelfListAdapter.ViewHolder> {
 
     private final List<BookModel> mValues = new ArrayList<>();
     private Activity mActivity;
 
-    public BookShelfRecyclerAdapter(Activity activity) {
+    public ShelfListAdapter(Activity activity) {
         mActivity = activity;
     }
 
@@ -48,7 +48,7 @@ public class BookShelfRecyclerAdapter extends RecyclerView.Adapter<BookShelfRecy
 
         holder.mView.setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.setClass(mActivity.getBaseContext(), ChapterPageActivity.class);
+            intent.setClass(mActivity.getBaseContext(), PageActivity.class);
             intent.putExtra(IntentConstant.PARCEL_BOOK_MODEL,holder.mItem);
             intent.putExtra(IntentConstant.PARAM_CHAPTER_ID,1);
             mActivity.startActivity(intent);

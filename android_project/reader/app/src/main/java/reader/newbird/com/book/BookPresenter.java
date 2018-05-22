@@ -18,6 +18,9 @@ public class BookPresenter implements IGetBook {
     }
 
 
+    /**
+     * 获得本地书籍
+     */
     public void getBook() {
         ThreadManager.getInstance().PostIOHandler(() -> {
             final List<BookModel> books = mFileManager.getLocalBooks();
@@ -27,7 +30,17 @@ public class BookPresenter implements IGetBook {
         mFileManager.readAssetBook(this).executeOnExecutor(ThreadManager.getInstance().getIOThread());
     }
 
-
+    /**
+     *  获得推荐书籍列表
+     */
+    public void getRecommendBooks() {
+        ThreadManager.getInstance().PostIOHandler(() -> {
+            final List<BookModel> books = null;
+            ThreadManager.getInstance().postUI(() -> updateBooks(books));
+        });
+        //更新asset中的文件
+        mFileManager.readAssetBook(this).executeOnExecutor(ThreadManager.getInstance().getIOThread());
+    }
 
     @Override
     public void updateBook(BookModel data) {

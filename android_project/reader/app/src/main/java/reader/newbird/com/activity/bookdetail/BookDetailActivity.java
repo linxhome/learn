@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import reader.newbird.com.R;
-import reader.newbird.com.activity.chapter.ChapterPageActivity;
+import reader.newbird.com.activity.chapter.PageActivity;
 import reader.newbird.com.base.ReaderContext;
 import reader.newbird.com.book.BookManager;
 import reader.newbird.com.book.BookModel;
@@ -118,7 +118,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 int chapterSeq = Integer.valueOf(filename.replace(BookManager.CHAPTER_FILE_SUFFIX
                         ,""));
-                intent.setClass(mActivity.getBaseContext(), ChapterPageActivity.class);
+                intent.setClass(mActivity.getBaseContext(), PageActivity.class);
                 intent.putExtra(IntentConstant.PARCEL_BOOK_MODEL,mBookModel);
                 intent.putExtra(IntentConstant.PARAM_CHAPTER_ID,chapterSeq);
                 mActivity.startActivity(intent);
