@@ -1,9 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config1 {
+        }
+    }
     compileSdkVersion 25
     defaultConfig {
-        applicationId 'com.newbird.reader' 
+        applicationId 'com.newbird.reader'
         minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
@@ -13,7 +17,8 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
+            //proguard-android.txt
         }
     }
     buildToolsVersion '26.0.2'
