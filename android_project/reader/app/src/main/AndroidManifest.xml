@@ -31,7 +31,7 @@
 
 
         <activity
-            android:name=".activity.chapter.ChapterPageActivity"
+            android:name=".activity.chapter.PageActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan"
             >

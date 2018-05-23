@@ -50,14 +50,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/white"
-            android:paddingTop="15dp">
+            >
 
             <ImageView
                 android:id="@+id/category_bottom_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="40dp"
+                android:padding="20dp"
+                android:layout_marginLeft="30dp"
                 android:src="@drawable/menu_icon_catalog_nor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -68,7 +68,7 @@
                 android:id="@+id/progress_bottom_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:padding="20dp"
                 android:src="@drawable/menu_icon_jump_nor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/category_bottom_btn"
@@ -78,7 +78,7 @@
                 android:id="@+id/setting_bottom_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:padding="20dp"
                 android:src="@drawable/menu_icon_setting_nor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/progress_bottom_btn"
@@ -88,8 +88,8 @@
                 android:id="@+id/font_bottom_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="40dp"
+                android:padding="20dp"
+                android:layout_marginRight="30dp"
                 android:src="@drawable/menu_icon_vote_nor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/setting_bottom_btn"
@@ -227,8 +227,6 @@
                 tools:visibility="gone" />
 
         </android.support.constraint.ConstraintLayout>
-
-
     </FrameLayout>
 
     <android.support.design.widget.NavigationView

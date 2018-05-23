@@ -33,7 +33,7 @@ import reader.newbird.com.config.IntentConstant;
 import reader.newbird.com.utils.Logs;
 import reader.newbird.com.view.ViewCombineGroup;
 
-public class ChapterPageActivity extends AppCompatActivity implements IGetChapter, PageClickListener, ColorStyleAdapter.ColorStyleListener {
+public class PageActivity extends AppCompatActivity implements IGetChapter, PageClickListener, ColorStyleAdapter.ColorStyleListener {
 
     private RecyclerView mPageRecyclerView;
     private View mBottomMenu;
@@ -64,7 +64,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     private ChapterPresenter mDataPresenter;
     private PageAdapter mPageAdapter;
     private LinearLayoutManager mPageManager;
-    private static final String TAG = "ChapterPageActivity";
+    private static final String TAG = "PageActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
         Intent intent = getIntent();
         mBookInfo = intent.getParcelableExtra(IntentConstant.PARCEL_BOOK_MODEL);
         if (mBookInfo == null) {
-            Logs.e("ChapterPageActivity", "empty book");
+            Logs.e("PageActivity", "empty book");
             finish();
             return;
         }
@@ -447,17 +447,17 @@ public class ChapterPageActivity extends AppCompatActivity implements IGetChapte
     public void clickArea(int area) {
         int position = mPageManager.findFirstCompletelyVisibleItemPosition();
         switch (area) {
-            case PageArea.HORIZONTAL_LEFT:
+            case PageRect.HORIZONTAL_LEFT:
                 if (position - 1 >= 0) {
                     mPageRecyclerView.smoothScrollToPosition(position - 1);
                 }
                 break;
-            case PageArea.HORIZONTAL_RIGHT:
+            case PageRect.HORIZONTAL_RIGHT:
                 if (position + 1 < mPageAdapter.getItemCount()) {
                     mPageRecyclerView.smoothScrollToPosition(position + 1);
                 }
                 break;
-            case PageArea.HORIZONTAL_MIDDLE:
+            case PageRect.HORIZONTAL_MIDDLE:
                 mMenuGroup.toggleShow();
                 break;
             default:

@@ -28,7 +28,7 @@ public class ShelfFragment extends Fragment implements IGetBook {
 
     private int mColumnCount = 1;
     private BookPresenter mBookPresenter;
-    private BookShelfRecyclerAdapter mDataAdapter;
+    private ShelfListAdapter mDataAdapter;
 
     public static ShelfFragment newInstance() {
         ShelfFragment fragment = new ShelfFragment();
@@ -59,7 +59,7 @@ public class ShelfFragment extends Fragment implements IGetBook {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mDataAdapter = new BookShelfRecyclerAdapter(getActivity());
+            mDataAdapter = new ShelfListAdapter(getActivity());
             recyclerView.setAdapter(mDataAdapter);
         }
         return view;

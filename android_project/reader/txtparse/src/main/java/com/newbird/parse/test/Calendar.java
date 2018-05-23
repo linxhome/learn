@@ -2,6 +2,10 @@ package com.newbird.parse.test;
 
 public class Calendar {
 
+    //书城的构建
+
+    //我的页面
+
     // UI的大小和点击区域的调整
 
     //背景色和颜色字体的调整

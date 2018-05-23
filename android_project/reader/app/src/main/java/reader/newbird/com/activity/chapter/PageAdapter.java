@@ -63,11 +63,11 @@ public class PageAdapter extends RecyclerView.Adapter<PageAdapter.ViewHolder> {
                             int rightLine = leftLine * 2;
                             if (mClickListener != null) {
                                 if (x < leftLine) {
-                                    mClickListener.clickArea(PageArea.HORIZONTAL_LEFT);
+                                    mClickListener.clickArea(PageRect.HORIZONTAL_LEFT);
                                 } else if (x > rightLine) {
-                                    mClickListener.clickArea(PageArea.HORIZONTAL_RIGHT);
+                                    mClickListener.clickArea(PageRect.HORIZONTAL_RIGHT);
                                 } else {
-                                    mClickListener.clickArea(PageArea.HORIZONTAL_MIDDLE);
+                                    mClickListener.clickArea(PageRect.HORIZONTAL_MIDDLE);
                                 }
                             }
                         }
