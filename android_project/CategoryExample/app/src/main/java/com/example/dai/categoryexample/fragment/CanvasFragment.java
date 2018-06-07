@@ -24,6 +24,7 @@ import com.example.dai.categoryexample.R;
 /**
  * Created by dai on 2018/5/8.
  * Comment: canvas example
+ *
  */
 public class CanvasFragment extends Fragment {
     private Button mButton;
@@ -88,6 +89,4 @@ public class CanvasFragment extends Fragment {
             mHandler.post(() -> mCanvas.setImageBitmap(bitmap));
         }
     }
-
-
 }
