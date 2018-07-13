@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
-import com.example.dai.categoryexample.fragment.adapter.MyNotifyItemRecyclerViewAdapter;
+import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem;
 
@@ -64,7 +64,7 @@ public class NotifyItemFragment extends Fragment {
             } else {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mRecyclerView.setAdapter(new MyNotifyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS(), null));
         }
         return view;
     }
@@ -78,19 +78,16 @@ public class NotifyItemFragment extends Fragment {
         handler.sendEmptyMessage(44);
 
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (NotifyItemFragment.this.isVisible()) {
-                    Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
-                    MyNotifyItemRecyclerViewAdapter adapter = (MyNotifyItemRecyclerViewAdapter) mRecyclerView.getAdapter();
-                    int count = adapter.getItemCount();
-                    DummyContent.ITEMS.add(new DummyItem("1", "lesson 1", "detail"));
-                    DummyContent.ITEMS.add(new DummyItem("2", "lesson 2", "detail"));
-                    adapter.notifyItemInserted(count);
-                }
-
+        handler.postDelayed(() -> {
+            if (NotifyItemFragment.this.isVisible()) {
+                Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
+                CoordinatorRecyclerViewAdapter adapter = (CoordinatorRecyclerViewAdapter) mRecyclerView.getAdapter();
+                int count = adapter.getItemCount();
+                DummyContent.INSTANCE.getITEMS().add(new DummyItem("1", "lesson 1", "detail"));
+                DummyContent.INSTANCE.getITEMS().add(new DummyItem("2", "lesson 2", "detail"));
+                adapter.notifyItemInserted(count);
             }
+
         }, 3000);
 
     }

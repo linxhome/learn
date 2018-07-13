@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.CanvasFragment;
+import com.example.dai.categoryexample.fragment.CoordinatorFragment;
 import com.example.dai.categoryexample.fragment.DrawableFragment;
 import com.example.dai.categoryexample.fragment.LayoutParamFragment;
 import com.example.dai.categoryexample.fragment.NotificationFragment;
@@ -56,6 +57,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         add("Canvas draw bitmap",new CanvasFragment());
         add("Storage",new StoreageFragment());
         add("DrawableFragment",new DrawableFragment());
+        add("CoordinatorFragment",new CoordinatorFragment());
     }
 
     private void add(String fragmentName, Fragment fragmentClass) {
