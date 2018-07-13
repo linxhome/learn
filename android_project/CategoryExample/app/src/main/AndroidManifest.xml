@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.dai.categoryexample">
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
@@ -12,8 +13,9 @@
         android:icon="@drawable/os_apple"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.FragmentManagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,7 +25,6 @@
         <activity android:name=".activity.DataBindingActivity" />
         <activity android:name=".activity.ConstraintActivity" />
         <activity android:name=".activity.PermissionActivity" />
-        <activity android:name=".activity.FragmentManagerActivity" />
         <activity
             android:name=".activity.EmptyActivity"
             android:parentActivityName=".activity.MainActivity">

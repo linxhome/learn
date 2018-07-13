@@ -31,6 +31,7 @@ import java.io.File;
 /**
  * Created by dai on 2018/5/8.
  * Comment: canvas example
+ *
  */
 public class CanvasFragment extends Fragment {
     private Button mButton;
@@ -143,6 +144,5 @@ public class CanvasFragment extends Fragment {
                     + cont2.hashCode() + "-" + cont3.hashCode() + "-" + cont4.hashCode());
         });
     }
-
 
 }
