@@ -15,6 +15,7 @@ import com.example.dai.categoryexample.fragment.CanvasFragment;
 import com.example.dai.categoryexample.fragment.LayoutParamFragment;
 import com.example.dai.categoryexample.fragment.NotificationFragment;
 import com.example.dai.categoryexample.fragment.NotifyItemFragment;
+import com.example.dai.categoryexample.fragment.StoreageFragment;
 import com.example.dai.categoryexample.fragment.UIThreadFragment;
 import com.example.dai.categoryexample.fragment.VisibleGoneFragment;
 
@@ -52,6 +53,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         add("Notifycation Problem",new NotificationFragment());
         add("Non UI Thread Problem",new UIThreadFragment());
         add("Canvas draw bitmap",new CanvasFragment());
+        add("Storage",new StoreageFragment());
     }
 
     private void add(String fragmentName, Fragment fragmentClass) {

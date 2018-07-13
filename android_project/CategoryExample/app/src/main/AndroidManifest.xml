@@ -21,7 +21,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DataBindingActivity" />
-        <activity android:name=".activity.StorageActivity" />
         <activity android:name=".activity.ConstraintActivity" />
         <activity android:name=".activity.PermissionActivity" />
         <activity android:name=".activity.FragmentManagerActivity" />
