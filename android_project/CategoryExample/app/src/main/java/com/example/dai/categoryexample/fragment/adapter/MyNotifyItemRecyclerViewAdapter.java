@@ -59,6 +59,13 @@ public class MyNotifyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyNoti
         return mValues.size();
     }
 
+    public void removeItem(int position) {
+        if(position >= getItemCount()) {
+            return;
+        }
+        mValues.remove(position);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;

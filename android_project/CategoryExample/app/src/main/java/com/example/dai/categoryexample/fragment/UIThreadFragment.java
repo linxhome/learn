@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
 
@@ -22,6 +25,7 @@ public class UIThreadFragment extends Fragment {
     private TextView mText2;
     private TextView mText3;
     private Button mButton;
+    private Button mToastButton;
 
     @Nullable
     @Override
@@ -31,6 +35,7 @@ public class UIThreadFragment extends Fragment {
         mText2 = (TextView) mRoot.findViewById(R.id.text2);
         mText3 = (TextView) mRoot.findViewById(R.id.text3);
         mButton = (Button) mRoot.findViewById(R.id.test_thread);
+        mToastButton = mRoot.findViewById(R.id.toast_btn);
         return mRoot;
     }
 
@@ -63,6 +68,28 @@ public class UIThreadFragment extends Fragment {
                     mText2.setVisibility(View.VISIBLE);
                     mText3.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        mToastButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast to = new Toast(getActivity());
+                View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_for_toast,null);
+                ImageView imageView = view.findViewById(R.id.toast_img);
+                TextView txtview = view.findViewById(R.id.toast_txt);
+                imageView.setImageResource(R.drawable.btn_delete_big_light);
+                txtview.setText("收到了房价肯定是疯了看见了空垃圾四大佛教收到了房价多少发拉家带口司法解释的反馈收到了反g倒是");
+
+                v.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        to.setView(view);
+                        to.setGravity(Gravity.CENTER,0,0);
+                        to.show();
+                    }
+                });
+
             }
         });
 

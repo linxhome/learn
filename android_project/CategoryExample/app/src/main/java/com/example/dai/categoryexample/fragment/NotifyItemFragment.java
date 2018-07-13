@@ -66,6 +66,18 @@ public class NotifyItemFragment extends Fragment {
             }
             mRecyclerView.setAdapter(new MyNotifyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         return view;
     }
 
@@ -78,19 +90,19 @@ public class NotifyItemFragment extends Fragment {
         handler.sendEmptyMessage(44);
 
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (NotifyItemFragment.this.isVisible()) {
-                    Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
-                    MyNotifyItemRecyclerViewAdapter adapter = (MyNotifyItemRecyclerViewAdapter) mRecyclerView.getAdapter();
-                    int count = adapter.getItemCount();
-                    DummyContent.ITEMS.add(new DummyItem("1", "lesson 1", "detail"));
-                    DummyContent.ITEMS.add(new DummyItem("2", "lesson 2", "detail"));
-                    adapter.notifyItemInserted(count);
-                }
+        handler.postDelayed(() -> {
+            if (NotifyItemFragment.this.isVisible()) {
+                Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
+                MyNotifyItemRecyclerViewAdapter adapter = (MyNotifyItemRecyclerViewAdapter) mRecyclerView.getAdapter();
+                int count = adapter.getItemCount();
+                DummyContent.ITEMS.add(new DummyItem("1", "lesson 1", "detail"));
+                DummyContent.ITEMS.add(new DummyItem("2", "lesson 2", "detail"));
+                adapter.notifyItemInserted(count);
 
+                adapter.notifyItemRemoved(0);
+                adapter.removeItem(0);
             }
+
         }, 3000);
 
     }
