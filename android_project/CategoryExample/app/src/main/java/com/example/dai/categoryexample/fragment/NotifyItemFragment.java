@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
-import com.example.dai.categoryexample.fragment.adapter.MyNotifyItemRecyclerViewAdapter;
+import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem;
 
@@ -64,7 +64,7 @@ public class NotifyItemFragment extends Fragment {
             } else {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mRecyclerView.setAdapter(new MyNotifyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS(), null));
         }
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -93,6 +93,7 @@ public class NotifyItemFragment extends Fragment {
         handler.postDelayed(() -> {
             if (NotifyItemFragment.this.isVisible()) {
                 Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
+<<<<<<< HEAD
                 MyNotifyItemRecyclerViewAdapter adapter = (MyNotifyItemRecyclerViewAdapter) mRecyclerView.getAdapter();
                 int count = adapter.getItemCount();
                 DummyContent.ITEMS.add(new DummyItem("1", "lesson 1", "detail"));
@@ -101,6 +102,13 @@ public class NotifyItemFragment extends Fragment {
 
                 adapter.notifyItemRemoved(0);
                 adapter.removeItem(0);
+=======
+                CoordinatorRecyclerViewAdapter adapter = (CoordinatorRecyclerViewAdapter) mRecyclerView.getAdapter();
+                int count = adapter.getItemCount();
+                DummyContent.INSTANCE.getITEMS().add(new DummyItem("1", "lesson 1", "detail"));
+                DummyContent.INSTANCE.getITEMS().add(new DummyItem("2", "lesson 2", "detail"));
+                adapter.notifyItemInserted(count);
+>>>>>>> 04b09cf0587f2fa4c937e431bd656c359fe9648d
             }
 
         }, 3000);

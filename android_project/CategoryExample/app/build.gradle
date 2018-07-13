@@ -42,11 +42,17 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.4.0'
+    compile 'com.android.support:support-v4:26.0.0'
+    compile 'com.android.support:recyclerview-v7:26.0.0'
     compile 'com.google.android.gms:play-services-plus:11.8.0'
+<<<<<<< HEAD
     compile 'com.android.support:appcompat-v7:25.4.0'
 
+=======
+    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support:design:26.0.0'
+>>>>>>> 04b09cf0587f2fa4c937e431bd656c359fe9648d
 }
 
 
@@ -55,3 +61,6 @@ dependencies {
 
 
 
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'

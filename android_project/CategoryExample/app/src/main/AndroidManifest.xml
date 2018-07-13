@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.FragmentManagerActivity">
+        <activity
+            android:name=".activity.FragmentManagerActivity"
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,7 +25,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DataBindingActivity" />
-        <activity android:name=".activity.StorageActivity" />
         <activity android:name=".activity.ConstraintActivity" />
         <activity android:name=".activity.PermissionActivity" />
         <activity
@@ -31,9 +32,10 @@
             android:parentActivityName=".activity.MainActivity">
         </activity>
 
-        <activity android:name=".activity.DialogActivity"
-            android:taskAffinity=""
-            android:excludeFromRecents="true"/>
+        <activity
+            android:name=".activity.DialogActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
 
         <service android:name=".service.ForeService" />
 

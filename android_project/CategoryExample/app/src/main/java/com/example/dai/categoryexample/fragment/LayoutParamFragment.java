@@ -27,6 +27,7 @@ public class LayoutParamFragment extends Fragment {
     private TextView mTextViewLl, mTextViewRl;
     private Button mBtnLL, mBtnRl;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -39,19 +40,9 @@ public class LayoutParamFragment extends Fragment {
         mBtnLL = (Button) mRoot.findViewById(R.id.linear_layout_btn);
         mBtnRl = (Button) mRoot.findViewById(R.id.relative_layout_btn);
 
-        mBtnLL.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testLinearLayoutParams();
-            }
-        });
+        mBtnLL.setOnClickListener(v -> testLinearLayoutParams());
 
-        mBtnRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testRelativeLayoutParams();
-            }
-        });
+        mBtnRl.setOnClickListener(v -> testRelativeLayoutParams());
         return mRoot;
     }
 

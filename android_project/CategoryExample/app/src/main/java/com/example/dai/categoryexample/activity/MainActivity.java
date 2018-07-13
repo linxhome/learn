@@ -37,7 +37,6 @@ public class MainActivity extends Activity {
         activitySet.put("FragmentManager", FragmentManagerActivity.class);
         activitySet.put("Constrains Layout", ConstraintActivity.class);
         activitySet.put("DataBinding", DataBindingActivity.class);
-        activitySet.put("Storage File", StorageActivity.class);
         activitySet.put("Dialog Problem", DialogActivity.class);
         activitySet.put("Start Service", ForeService.class);
         activitySet.put("Permission", PermissionActivity.class);

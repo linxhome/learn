@@ -56,18 +56,15 @@ public class UIThreadFragment extends Fragment {
         };
         thread.start();
 
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mText1.getVisibility() == View.VISIBLE) {
-                    mText1.setVisibility(View.GONE);
-                    mText2.setVisibility(View.GONE);
-                    mText3.setVisibility(View.GONE);
-                } else {
-                    mText1.setVisibility(View.VISIBLE);
-                    mText2.setVisibility(View.VISIBLE);
-                    mText3.setVisibility(View.VISIBLE);
-                }
+        mButton.setOnClickListener(v -> {
+            if(mText1.getVisibility() == View.VISIBLE) {
+                mText1.setVisibility(View.GONE);
+                mText2.setVisibility(View.GONE);
+                mText3.setVisibility(View.GONE);
+            } else {
+                mText1.setVisibility(View.VISIBLE);
+                mText2.setVisibility(View.VISIBLE);
+                mText3.setVisibility(View.VISIBLE);
             }
         });
 
