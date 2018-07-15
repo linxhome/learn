@@ -93,22 +93,12 @@ public class NotifyItemFragment extends Fragment {
         handler.postDelayed(() -> {
             if (NotifyItemFragment.this.isVisible()) {
                 Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
-<<<<<<< HEAD
-                MyNotifyItemRecyclerViewAdapter adapter = (MyNotifyItemRecyclerViewAdapter) mRecyclerView.getAdapter();
-                int count = adapter.getItemCount();
-                DummyContent.ITEMS.add(new DummyItem("1", "lesson 1", "detail"));
-                DummyContent.ITEMS.add(new DummyItem("2", "lesson 2", "detail"));
-                adapter.notifyItemInserted(count);
 
-                adapter.notifyItemRemoved(0);
-                adapter.removeItem(0);
-=======
                 CoordinatorRecyclerViewAdapter adapter = (CoordinatorRecyclerViewAdapter) mRecyclerView.getAdapter();
                 int count = adapter.getItemCount();
                 DummyContent.INSTANCE.getITEMS().add(new DummyItem("1", "lesson 1", "detail"));
                 DummyContent.INSTANCE.getITEMS().add(new DummyItem("2", "lesson 2", "detail"));
                 adapter.notifyItemInserted(count);
->>>>>>> 04b09cf0587f2fa4c937e431bd656c359fe9648d
             }
 
         }, 3000);
