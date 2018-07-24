@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <android.support.design.widget.AppBarLayout
+    <com.example.dai.categoryexample.view.NestScrollParent
+        android:id="@+id/view_parent"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        >
+        android:layout_height="300dp"
+        android:background="@color/colorPrimary">
 
-        <ImageView
+        <com.example.dai.categoryexample.view.NestScrollChild
+            android:id="@+id/view_child"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="20dp"
-            android:src="@drawable/gradient"
-            app:layout_scrollFlags="scroll" />
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorAccent">
 
-        <TextView
-            android:layout_width="20sp"
-            android:layout_height="20dp"
-            android:background="@color/white"
-            android:text="this is the title"
-            app:layout_scrollFlags="scroll" />
-    </android.support.design.widget.AppBarLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/child_text_tips" />
+        </com.example.dai.categoryexample.view.NestScrollChild>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:name="com.example.dai.categoryexample.fragment.CoordinatorFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
-
-
-</android.support.design.widget.CoordinatorLayout>
-
+    </com.example.dai.categoryexample.view.NestScrollParent>
+</FrameLayout>
 
