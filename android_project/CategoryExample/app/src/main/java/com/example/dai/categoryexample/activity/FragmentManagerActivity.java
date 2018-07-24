@@ -1,5 +1,6 @@
 package com.example.dai.categoryexample.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -43,6 +44,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_item_list);
         setTitle("FragmentManager");
+        setTitleColor(Color.BLUE);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
         mAdapter = new MyAdapter();

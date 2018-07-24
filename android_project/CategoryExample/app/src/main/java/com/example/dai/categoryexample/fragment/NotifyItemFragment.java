@@ -2,6 +2,8 @@ package com.example.dai.categoryexample.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,22 +11,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
+import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
+ * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
 public class NotifyItemFragment extends Fragment {
 
+    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    // TODO: Customize parameters
     private int mColumnCount = 1;
-    private int mTop = 0;
+    private OnListFragmentInteractionListener mListener;
 
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
     public NotifyItemFragment() {
     }
 
@@ -54,8 +65,6 @@ public class NotifyItemFragment extends Fragment {
         }
         mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS(), null));
 
-        mRecyclerView.post(() -> mTop = mRecyclerView.getTop());
-
 
         view.findViewById(R.id.y_btn).setOnClickListener(v -> {
             mRecyclerView.setTranslationY(100);
@@ -68,7 +77,7 @@ public class NotifyItemFragment extends Fragment {
 
         view.findViewById(R.id.reset_btn).setOnClickListener(v -> {
             mRecyclerView.setTranslationY(0);
-            mRecyclerView.setTop(mTop);
+            //mRecyclerView.setTop(mTop);
         });
         return view;
     }
@@ -78,8 +87,10 @@ public class NotifyItemFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-       /* Handler handler = new Handler(Looper.getMainLooper());
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.sendEmptyMessage(44);
+
+
         handler.postDelayed(() -> {
             if (NotifyItemFragment.this.isVisible()) {
                 Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
@@ -90,14 +101,14 @@ public class NotifyItemFragment extends Fragment {
                 adapter.notifyItemInserted(count);
             }
 
-        }, 3000);*/
-
+        }, 3000);
 
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     @SuppressWarnings("unused")
@@ -109,4 +120,18 @@ public class NotifyItemFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnListFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onListFragmentInteraction(DummyItem item);
+    }
 }
