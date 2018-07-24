@@ -35,9 +35,7 @@ public class MainActivity extends Activity {
 
         final Map<String, Class> activitySet = new LinkedHashMap<>();
         activitySet.put("FragmentManager", FragmentManagerActivity.class);
-        activitySet.put("Constrains Layout", ConstraintActivity.class);
         activitySet.put("DataBinding", DataBindingActivity.class);
-        activitySet.put("Dialog Problem", DialogActivity.class);
         activitySet.put("Start Service", ForeService.class);
         activitySet.put("Permission", PermissionActivity.class);
         activitySet.put("Empty Page", EmptyActivity.class);

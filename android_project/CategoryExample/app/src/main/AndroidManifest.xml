@@ -25,23 +25,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DataBindingActivity" />
-        <activity android:name=".activity.ConstraintActivity" />
         <activity android:name=".activity.PermissionActivity" />
         <activity
             android:name=".activity.EmptyActivity"
             android:parentActivityName=".activity.MainActivity">
         </activity>
 
-        <activity
-            android:name=".activity.DialogActivity"
-            android:excludeFromRecents="true"
-            android:taskAffinity="" />
-
         <service android:name=".service.ForeService" />
-
-        <activity
-            android:name=".activity.RecyclerActivity"
-            android:label="@string/title_activity_recycler" />
 
         <receiver android:name=".receiver.OreoReceiver">
             <intent-filter>

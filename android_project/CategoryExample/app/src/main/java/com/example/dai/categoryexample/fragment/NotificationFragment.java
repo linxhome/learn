@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.dai.categoryexample.R;
-import com.example.dai.categoryexample.activity.DialogActivity;
 import com.example.dai.categoryexample.activity.EmptyActivity;
 import com.example.dai.categoryexample.receiver.OreoReceiver;
 
@@ -117,7 +116,7 @@ public class NotificationFragment extends Fragment implements View.OnClickListen
     }
 
     private void changeIntent() {
-        Intent intent = new Intent(getActivity(), DialogActivity.class);
+        Intent intent = new Intent(getActivity(), EmptyActivity.class);
         PendingIntent content = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(content);
@@ -149,7 +148,7 @@ public class NotificationFragment extends Fragment implements View.OnClickListen
      * 独立的task栈
      */
     private void specialActivity() {
-        Intent intent = new Intent(getActivity(), DialogActivity.class);
+        Intent intent = new Intent(getActivity(), EmptyActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder = new NotificationCompat.Builder(getActivity())
