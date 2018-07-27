@@ -11,9 +11,9 @@ import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_coordinator.view.*
 
-class CoordinatorRecyclerViewAdapter(
+class RecyclerViewAdapter(
         private val mValues: List<DummyItem>)
-    : RecyclerView.Adapter<CoordinatorRecyclerViewAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     init {
 

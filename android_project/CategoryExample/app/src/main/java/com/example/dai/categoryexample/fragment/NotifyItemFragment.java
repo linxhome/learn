@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
-import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter;
+import com.example.dai.categoryexample.fragment.adapter.RecyclerViewAdapter;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem;
 
@@ -63,7 +63,7 @@ public class NotifyItemFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS()));
+        mRecyclerView.setAdapter(new RecyclerViewAdapter(DummyContent.INSTANCE.getITEMS()));
 
 
         view.findViewById(R.id.y_btn).setOnClickListener(v -> {
@@ -94,7 +94,7 @@ public class NotifyItemFragment extends Fragment {
         handler.postDelayed(() -> {
             if (NotifyItemFragment.this.isVisible()) {
                 Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
-                CoordinatorRecyclerViewAdapter adapter = (CoordinatorRecyclerViewAdapter) mRecyclerView.getAdapter();
+                RecyclerViewAdapter adapter = (RecyclerViewAdapter) mRecyclerView.getAdapter();
                 int count = adapter.getItemCount();
                 DummyContent.INSTANCE.getITEMS().add(new DummyItem("1", "lesson 1", "detail"));
                 DummyContent.INSTANCE.getITEMS().add(new DummyItem("2", "lesson 2", "detail"));

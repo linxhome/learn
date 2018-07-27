@@ -1,6 +1,5 @@
 package com.example.dai.categoryexample.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -10,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dai.categoryexample.R
-import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter
+import com.example.dai.categoryexample.fragment.adapter.RecyclerViewAdapter
 
 import com.example.dai.categoryexample.fragment.dummy.DummyContent
 import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem
@@ -36,7 +35,7 @@ class NestScrollFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = CoordinatorRecyclerViewAdapter(DummyContent.ITEMS)
+                adapter = RecyclerViewAdapter(DummyContent.ITEMS)
             }
         }
         return view
