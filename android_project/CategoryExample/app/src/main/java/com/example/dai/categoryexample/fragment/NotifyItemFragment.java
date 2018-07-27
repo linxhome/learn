@@ -63,7 +63,7 @@ public class NotifyItemFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS(), null));
+        mRecyclerView.setAdapter(new CoordinatorRecyclerViewAdapter(DummyContent.INSTANCE.getITEMS()));
 
 
         view.findViewById(R.id.y_btn).setOnClickListener(v -> {

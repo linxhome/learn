@@ -1,43 +1,49 @@
 package com.example.dai.categoryexample.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dai.categoryexample.R
+import com.example.dai.categoryexample.fragment.adapter.CoordinatorRecyclerViewAdapter
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.dai.categoryexample.fragment.dummy.DummyContent
+import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem
 
 /**
- *
+ * A fragment representing a list of Items.
+ * Activities containing this fragment MUST implement the
+ * [NestScrollFragment.OnListFragmentInteractionListener] interface.
  */
 class NestScrollFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var columnCount = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_nest_scroll, container, false)
+        val view = inflater.inflate(R.layout.fragment_nest_scroll, container, false)
+
+        // Set the adapter
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
+        if (recyclerView is RecyclerView) {
+            with(recyclerView) {
+                layoutManager = when {
+                    columnCount <= 1 -> LinearLayoutManager(context)
+                    else -> GridLayoutManager(context, columnCount)
+                }
+                adapter = CoordinatorRecyclerViewAdapter(DummyContent.ITEMS)
+            }
+        }
+        return view
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                NestScrollFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
+    interface OnListFragmentInteractionListener {
+        fun onListFragmentInteraction(item: DummyItem?)
     }
+
 }

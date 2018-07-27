@@ -7,31 +7,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.dai.categoryexample.R
 
-
-import com.example.dai.categoryexample.fragment.CoordinatorFragment.OnListFragmentInteractionListener
 import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_coordinator.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
 class CoordinatorRecyclerViewAdapter(
-        private val mValues: List<DummyItem>,
-        private val mListener: OnListFragmentInteractionListener?)
+        private val mValues: List<DummyItem>)
     : RecyclerView.Adapter<CoordinatorRecyclerViewAdapter.ViewHolder>() {
 
-    private val mOnClickListener: View.OnClickListener
-
     init {
-        mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
-        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,11 +29,6 @@ class CoordinatorRecyclerViewAdapter(
         val item = mValues[position]
         holder.mIdView.text = item.id
         holder.mContentView.text = item.content
-
-        with(holder.mView) {
-            tag = item
-            setOnClickListener(mOnClickListener)
-        }
     }
 
     override fun getItemCount(): Int = mValues.size
