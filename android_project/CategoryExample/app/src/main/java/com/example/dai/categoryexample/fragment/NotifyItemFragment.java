@@ -57,7 +57,7 @@ public class NotifyItemFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-        mRecyclerView = view.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
         if (mColumnCount <= 1) {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
