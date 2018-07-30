@@ -1,5 +1,6 @@
 package com.example.dai.categoryexample.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -60,6 +61,26 @@ public class FragmentManagerActivity extends FragmentActivity {
         add("Storage",new StoreageFragment());
         add("DrawableFragment",new DrawableFragment());
         add("CoordinatorFragment",new NestScrollFragment());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
     }
 
     private void add(String fragmentName, Fragment fragmentClass) {
