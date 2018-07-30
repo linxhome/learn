@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.helper.ThreadHelper;
 import com.example.dai.categoryexample.view.LazyDrawable;
 
 import java.io.File;
@@ -58,6 +59,8 @@ public class CanvasFragment extends Fragment {
         mLazyButton = (Button) root.findViewById(R.id.lazy_button);
         mLazyImage = (ImageView) root.findViewById(R.id.lazy_imageview);
         initView();
+
+        ThreadHelper.get().test();
 
         return root;
     }
