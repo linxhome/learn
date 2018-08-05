@@ -13,33 +13,37 @@ import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.item_two_text.view.*
 
-class RecyclerViewAdapter(
+open class RecyclerViewAdapter(
         private val mValues: List<DummyItem>)
-    : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+    : RecyclerLoadMoreAdapter() {
 
-    init {
-
+    override fun doGetItemViewType(position: Int): Int {
+        return 1
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun doGetItemCount(): Int {
+        return mValues.size
+    }
+
+    override fun doOnBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = mValues[position]
+        if (holder is ViewHolder) {
+            holder.mIdView.text = item.id
+            holder.mContentView.text = item.content
+            holder.mButton.setOnClickListener { Toast.makeText(it.context, "show click", Toast.LENGTH_LONG).show() }
+        }
+    }
+
+    override fun doOnCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_two_text, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view)//To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
-        holder.mButton.setOnClickListener { Toast.makeText(it.context,"show click",Toast.LENGTH_LONG).show()}
-    }
-
-    override fun getItemCount(): Int = mValues.size
-
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
-        val mButton:Button = mView.button
+    inner class ViewHolder(mView: View) : RecyclerView.ViewHolder(mView) {
+        val mIdView: TextView = mView.findViewById(R.id.item_number)
+        val mContentView: TextView = mView.findViewById(R.id.content)
+        val mButton: Button = mView.findViewById(R.id.button)
 
         override fun toString(): String {
             return super.toString() + " '" + mContentView.text + "'"

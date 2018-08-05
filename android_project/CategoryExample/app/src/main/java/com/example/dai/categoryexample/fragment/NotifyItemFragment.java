@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
@@ -63,8 +64,15 @@ public class NotifyItemFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        mRecyclerView.setAdapter(new RecyclerViewAdapter(DummyContent.INSTANCE.getITEMS()));
 
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(DummyContent.INSTANCE.getITEMS());
+        mRecyclerView.setAdapter(adapter);
+
+        adapter.setLoadingEnable(true);
+        TextView loadingView = new TextView(getContext());
+        loadingView.setText("Loading");
+        loadingView.setTextColor(getResources().getColor(R.color.black,null));
+        adapter.setLoadingView(loadingView);
 
         view.findViewById(R.id.y_btn).setOnClickListener(v -> {
             mRecyclerView.setTranslationY(100);

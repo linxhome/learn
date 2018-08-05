@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.CanvasFragment;
+import com.example.dai.categoryexample.fragment.CoordinateFragment;
 import com.example.dai.categoryexample.fragment.NestScrollFragment;
 import com.example.dai.categoryexample.fragment.DrawableFragment;
 import com.example.dai.categoryexample.fragment.LayoutParamFragment;
@@ -51,6 +52,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
+
         //增加页面的位置
         add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
         add("Recycler View Test", NotifyItemFragment.newInstance(1));
@@ -59,8 +61,9 @@ public class FragmentManagerActivity extends FragmentActivity {
         add("Non UI Thread Problem",new UIThreadFragment());
         add("Canvas draw bitmap",new CanvasFragment());
         add("Storage",new StoreageFragment());
-        add("DrawableFragment",new DrawableFragment());
-        add("CoordinatorFragment",new NestScrollFragment());
+        add("Drawable Example",new DrawableFragment());
+        add("NestScroll Example",new NestScrollFragment());
+        add("Coordinate Example",new CoordinateFragment());
     }
 
     @Override
