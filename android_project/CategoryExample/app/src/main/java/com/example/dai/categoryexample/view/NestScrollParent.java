@@ -3,7 +3,7 @@ package com.example.dai.categoryexample.view;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingParent2;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
  * Comment: test view for nest Scroller
  */
 
-public class NestScrollParent extends RelativeLayout implements NestedScrollingParent2 {
+public class NestScrollParent extends RelativeLayout implements NestedScrollingParent {
 
     private NestedScrollingParentHelper mScrollingParentHelper;
 
@@ -30,22 +30,22 @@ public class NestScrollParent extends RelativeLayout implements NestedScrollingP
     }
 
     @Override
-    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
+    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes) {
         return true;
     }
 
     @Override
-    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
-        mScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes) {
+        mScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
     }
 
     @Override
-    public void onStopNestedScroll(@NonNull View target, int type) {
-        mScrollingParentHelper.onStopNestedScroll(target, type);
+    public void onStopNestedScroll(@NonNull View target) {
+        mScrollingParentHelper.onStopNestedScroll(target);
     }
 
     @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         int newY = (int) getY() + dyUnconsumed;
         int consumeY = 0;
         if (newY <= 0) {
@@ -60,7 +60,7 @@ public class NestScrollParent extends RelativeLayout implements NestedScrollingP
     }
 
     @Override
-    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @Nullable int[] consumed, int type) {
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @Nullable int[] consumed) {
 
     }
 }

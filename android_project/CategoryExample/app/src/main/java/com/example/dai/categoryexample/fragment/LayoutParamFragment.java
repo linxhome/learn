@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
+import com.example.dai.categoryexample.helper.UIHelper;
 
 /**
  * Created by dai on 2018/4/25.
@@ -40,9 +41,12 @@ public class LayoutParamFragment extends Fragment {
         mBtnLL = (Button) mRoot.findViewById(R.id.linear_layout_btn);
         mBtnRl = (Button) mRoot.findViewById(R.id.relative_layout_btn);
 
+
         mBtnLL.setOnClickListener(v -> testLinearLayoutParams());
 
         mBtnRl.setOnClickListener(v -> testRelativeLayoutParams());
+
+        mRoot.findViewById(R.id.float_button).setOnClickListener(v -> UIHelper.addFloatWindow(getActivity()));
         return mRoot;
     }
 
@@ -91,4 +95,6 @@ public class LayoutParamFragment extends Fragment {
         layoutParams.addRule(RelativeLayout.END_OF, R.id.rl_sample_textview);
         mTextViewRl.setLayoutParams(layoutParams);
     }
+
+
 }

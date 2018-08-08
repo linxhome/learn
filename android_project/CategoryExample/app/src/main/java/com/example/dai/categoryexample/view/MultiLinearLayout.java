@@ -18,6 +18,7 @@ public class MultiLinearLayout extends LinearLayout {
         super(context);
         infoTxt = new TextView(context);
         addView(infoTxt);
+
     }
 
     public MultiLinearLayout(Context context, @Nullable AttributeSet attrs) {

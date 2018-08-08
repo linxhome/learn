@@ -91,6 +91,11 @@ public class FragmentManagerActivity extends FragmentActivity {
         mAdapter.addData(fragmentName);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         List<String> mData = new ArrayList<>();

@@ -41,9 +41,9 @@ open class RecyclerViewAdapter(
     }
 
     inner class ViewHolder(mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.findViewById(R.id.item_number)
-        val mContentView: TextView = mView.findViewById(R.id.content)
-        val mButton: Button = mView.findViewById(R.id.button)
+        val mIdView: TextView = mView.findViewById(R.id.item_number) as TextView
+        val mContentView: TextView = mView.findViewById(R.id.content) as TextView
+        val mButton: Button = mView.findViewById(R.id.button) as Button
 
         override fun toString(): String {
             return super.toString() + " '" + mContentView.text + "'"

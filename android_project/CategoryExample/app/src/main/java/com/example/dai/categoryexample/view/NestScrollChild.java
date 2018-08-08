@@ -2,7 +2,7 @@ package com.example.dai.categoryexample.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingChild2;
+import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
  * Comment:test view for nest Scroller
  */
 
-public class NestScrollChild extends RelativeLayout implements NestedScrollingChild2 {
+public class NestScrollChild extends RelativeLayout implements NestedScrollingChild {
 
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
@@ -32,29 +32,29 @@ public class NestScrollChild extends RelativeLayout implements NestedScrollingCh
     }
 
     @Override
-    public boolean startNestedScroll(int axes, int type) {
-        return mNestedScrollingChildHelper.startNestedScroll(axes, type);
+    public boolean startNestedScroll(int axes) {
+        return mNestedScrollingChildHelper.startNestedScroll(axes);
     }
 
     @Override
-    public void stopNestedScroll(int type) {
-        mNestedScrollingChildHelper.stopNestedScroll(type);
+    public void stopNestedScroll() {
+        mNestedScrollingChildHelper.stopNestedScroll();
     }
 
     @Override
-    public boolean hasNestedScrollingParent(int type) {
-        return mNestedScrollingChildHelper.hasNestedScrollingParent(type);
+    public boolean hasNestedScrollingParent() {
+        return mNestedScrollingChildHelper.hasNestedScrollingParent();
     }
 
     @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow, int type) {
-        mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type);
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow) {
+        mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
         return false;
     }
 
     @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed, @Nullable int[] offsetInWindow, int type) {
-        return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type);
+    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed, @Nullable int[] offsetInWindow) {
+        return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 
     private float lastY = 0;
@@ -66,7 +66,7 @@ public class NestScrollChild extends RelativeLayout implements NestedScrollingCh
             case MotionEvent.ACTION_DOWN:
                 lastY = event.getRawY();
                 dy = 0;
-                return startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.TYPE_TOUCH);
+                return startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
             case MotionEvent.ACTION_MOVE:
                 dy = event.getRawY() - lastY;
                 lastY = event.getRawY();
@@ -85,7 +85,7 @@ public class NestScrollChild extends RelativeLayout implements NestedScrollingCh
                 }
                 setY(getY() + consumedY);
 
-                dispatchNestedScroll(0, consumedY, 0, (int) dy - consumedY, null, ViewCompat.TYPE_TOUCH);
+                dispatchNestedScroll(0, consumedY, 0, (int) dy - consumedY, null);
                 /*if (dispatchNestedPreScroll(0, (int) dy, consumed, null, ViewCompat.TYPE_TOUCH)) {
                     dy -= consumed[1];
                 }
