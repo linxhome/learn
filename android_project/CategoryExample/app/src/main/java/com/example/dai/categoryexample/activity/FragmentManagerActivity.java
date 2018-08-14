@@ -56,8 +56,8 @@ public class FragmentManagerActivity extends FragmentActivity {
         //增加页面的位置
         add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
         add("Recycler View Test", NotifyItemFragment.newInstance(1));
-        add("layout params test",new LayoutParamFragment());
-        add("Notifycation Problem",new NotificationFragment());
+        add("Layout params test",new LayoutParamFragment());
+        add("Notification Problem",new NotificationFragment());
         add("Non UI Thread Problem",new UIThreadFragment());
         add("Canvas draw bitmap",new CanvasFragment());
         add("Storage",new StoreageFragment());

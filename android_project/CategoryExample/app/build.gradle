@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.example.dai.categoryexample"
         minSdkVersion 22
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -49,11 +49,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.android.support:design:25.0.0'
 }
-
-
-
-
-
 
 
 
