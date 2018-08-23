@@ -37,7 +37,7 @@ class DialogFragment : Fragment() {
         val builder = AlertDialog.Builder(activity)
         dialog = builder.setTitle("试试").setMessage("打开后消失").create()
         val task = Task()
-        view.findViewById(R.id.dialog_button).setOnClickListener(View.OnClickListener {
+        view.findViewById<View>(R.id.dialog_button).setOnClickListener(View.OnClickListener {
             if (task.status != AsyncTask.Status.FINISHED) {
                 task.execute()
             }
@@ -49,7 +49,7 @@ class DialogFragment : Fragment() {
         //dialog leak window problem
         val builder1 = AlertDialog.Builder(activity)
         val dialog2 = builder1.setTitle("will leak").setMessage("try to destroy the activity").create()
-        val button2 = view.findViewById(R.id.create_button2)
+        val button2 = view.findViewById<View>(R.id.create_button2)
         button2.setOnClickListener {
             dialog2.show()
             postDelayDestroy()

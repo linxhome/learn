@@ -1,4 +1,4 @@
-package com.example.dai.categoryexample.binding;
+package com.example.dai.categoryexample.viewmodel;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;

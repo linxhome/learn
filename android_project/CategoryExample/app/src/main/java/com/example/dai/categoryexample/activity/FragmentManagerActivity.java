@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.CanvasFragment;
 import com.example.dai.categoryexample.fragment.CoordinateFragment;
+import com.example.dai.categoryexample.fragment.LaunchModeFragment;
+import com.example.dai.categoryexample.fragment.MultiFeedTypeFragment;
 import com.example.dai.categoryexample.fragment.NestScrollFragment;
 import com.example.dai.categoryexample.fragment.DrawableFragment;
 import com.example.dai.categoryexample.fragment.LayoutParamFragment;
@@ -51,19 +54,23 @@ public class FragmentManagerActivity extends FragmentActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
-
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //增加页面的位置
-        add("View And Gone Problem", VisibleGoneFragment.newInstance("1","2"));
+        add("View And Gone Problem", VisibleGoneFragment.newInstance("1", "2"));
         add("Recycler View Test", NotifyItemFragment.newInstance(1));
-        add("Layout params test",new LayoutParamFragment());
-        add("Notification Problem",new NotificationFragment());
-        add("Non UI Thread Problem",new UIThreadFragment());
-        add("Canvas draw bitmap",new CanvasFragment());
-        add("Storage",new StoreageFragment());
-        add("Drawable Example",new DrawableFragment());
-        add("NestScroll Example",new NestScrollFragment());
-        add("Coordinate Example",new CoordinateFragment());
+        add("Layout params test", new LayoutParamFragment());
+        add("Notification Problem", new NotificationFragment());
+        add("Non UI Thread Problem", new UIThreadFragment());
+        add("Canvas draw bitmap", new CanvasFragment());
+        add("Storage", new StoreageFragment());
+        add("Drawable Example", new DrawableFragment());
+        add("NestScroll Example", new NestScrollFragment());
+        add("Coordinate Example", new CoordinateFragment());
+        add("Activity Launch Mode Example", LaunchModeFragment.newInstance("start", "no"));
+        add("Multi Feed Type", MultiFeedTypeFragment.newInstance(1));
+
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -114,20 +121,17 @@ public class FragmentManagerActivity extends FragmentActivity {
             holder.mContentView.setText(name);
             holder.mTextView.setText(position + 1 + ":");
 
-            holder.mContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                    String name = mData.get(position);
-                    Fragment fragment = mFragmentMap.get(name);
-                    if (fragment != null && !fragment.isAdded()) {
-                        android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        transaction.add(android.R.id.content, fragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    } else {
-                        Log.i("FragmentManagerActivity", name + "is null or has added");
-                    }
+            holder.mContainer.setOnClickListener(v -> {
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                String name1 = mData.get(position);
+                Fragment fragment = mFragmentMap.get(name1);
+                if (fragment != null && !fragment.isAdded()) {
+                    android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.add(android.R.id.content, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    Log.i("FragmentManagerActivity", name1 + "is null or has added");
                 }
             });
         }

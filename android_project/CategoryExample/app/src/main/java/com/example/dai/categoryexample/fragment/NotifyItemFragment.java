@@ -12,12 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dai.categoryexample.R;
 import com.example.dai.categoryexample.fragment.adapter.RecyclerViewAdapter;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
-import com.example.dai.categoryexample.fragment.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -74,7 +72,7 @@ public class NotifyItemFragment extends Fragment {
         loadingView.setTextColor(getResources().getColor(R.color.black,null));
         adapter.setLoadingView(loadingView);
 
-        view.findViewById(R.id.y_btn).setOnClickListener(v -> {
+       /* view.findViewById(R.id.y_btn).setOnClickListener(v -> {
             mRecyclerView.setTranslationY(100);
         });
 
@@ -86,7 +84,7 @@ public class NotifyItemFragment extends Fragment {
         view.findViewById(R.id.reset_btn).setOnClickListener(v -> {
             mRecyclerView.setTranslationY(0);
             //mRecyclerView.setTop(mTop);
-        });
+        });*/
         return view;
     }
 
@@ -99,17 +97,17 @@ public class NotifyItemFragment extends Fragment {
         handler.sendEmptyMessage(44);
 
 
-        handler.postDelayed(() -> {
+      /*  handler.postDelayed(() -> {
             if (NotifyItemFragment.this.isVisible()) {
                 Toast.makeText(getActivity(), "start to add data ", Toast.LENGTH_SHORT);
                 RecyclerViewAdapter adapter = (RecyclerViewAdapter) mRecyclerView.getAdapter();
                 int count = adapter.getItemCount();
-                DummyContent.INSTANCE.getITEMS().add(new DummyItem("1", "lesson 1", "detail"));
-                DummyContent.INSTANCE.getITEMS().add(new DummyItem("2", "lesson 2", "detail"));
+                DummyContent.INSTANCE.getITEMS().add(new DummyContent.DummyItem("1", "lesson 1", "detail"));
+                DummyContent.INSTANCE.getITEMS().add(new DummyContent.DummyItem("2", "lesson 2", "detail"));
                 adapter.notifyItemInserted(count);
             }
 
-        }, 3000);
+        }, 3000);*/
 
     }
 
@@ -140,6 +138,6 @@ public class NotifyItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(DummyContent.DummyItem item);
     }
 }

@@ -9,7 +9,7 @@ import android.os.MessageQueue;
 import android.util.Log;
 
 import com.example.dai.categoryexample.R;
-import com.example.dai.categoryexample.binding.DataBindingVM;
+import com.example.dai.categoryexample.viewmodel.DataBindingVM;
 import com.example.dai.categoryexample.databinding.ActivityDataBindingBinding;
 
 /**

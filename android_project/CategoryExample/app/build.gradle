@@ -2,17 +2,22 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId "com.example.dai.categoryexample"
         minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -32,25 +37,40 @@ android {
     dexOptions {
         preDexLibraries false
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
-    compile 'com.google.android.gms:play-services-plus:11.8.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.2'
+    compile "com.android.support:support-v4:$support_version"
+    compile "com.android.support:recyclerview-v7:$support_version"
+    compile "com.android.support:appcompat-v7:$support_version"
+    compile "com.android.support:design:$support_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //compile project(':crock-annotation')
+    compile project(':crock-android')
+    //annotationProcessor project(':crock-processer')
 }
-
-
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
+
+task tarz(type: Tar) {
+    archiveName = 'code.tar.gz'
+    from 'src'
+
+    destinationDir file('build/tar')
+    extension 'tar'
+    compression = Compression.GZIP
+}
+
+

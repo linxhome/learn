@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="com.example.dai.categoryexample.ItemFragment"
+    android:name="com.example.dai.categoryexample.fragment.MultiFeedTypeFragment"
+    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:padding="16dp"
-    tools:context="com.example.dai.categoryexample.activity.FragmentManagerActivity"
-    tools:listitem="@layout/fragment_item" />
+    tools:context=".fragment.MultiFeedTypeFragment"
+    tools:listitem="@layout/item_multi_feed" />

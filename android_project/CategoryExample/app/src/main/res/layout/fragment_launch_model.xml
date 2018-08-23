@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".fragment.LaunchModeFragment">
+
+    <TextView
+        android:id="@+id/name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="activity Name" />
+
+    <Button
+        android:id="@+id/standardBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="standard" />
+
+    <Button
+        android:id="@+id/singleTopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="single Top" />
+
+    <Button
+        android:id="@+id/singleTaskBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Single Task" />
+
+    <Button
+        android:id="@+id/singleInstanceBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Single Instance" />
+
+    <Button
+        android:id="@+id/FNewTaskBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flag New Task" />
+
+    <Button
+        android:id="@+id/FClearTopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flag Clean Top" />
+
+    <Button
+        android:id="@+id/FNewTaskClearTopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flag New Task | Clear Top" />
+
+    <Button
+        android:id="@+id/FSingleTopClearTopBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="flag single Top | Clear Top" />
+
+
+</LinearLayout>

@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.example.dai.categoryexample.binding.DataBindingVM" />
+            type="com.example.dai.categoryexample.viewmodel.DataBindingVM" />
     </data>
 
     <LinearLayout
