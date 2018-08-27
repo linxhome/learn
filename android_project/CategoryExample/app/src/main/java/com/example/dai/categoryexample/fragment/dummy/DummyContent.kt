@@ -52,5 +52,8 @@ object DummyContent {
      */
     data class DummyItem(val id: String, val content: String, val details: String) {
         override fun toString(): String = content
+        fun getType(): Int {
+            return hashCode() % 10 % 4 // 尾数与4取余
+        }
     }
 }

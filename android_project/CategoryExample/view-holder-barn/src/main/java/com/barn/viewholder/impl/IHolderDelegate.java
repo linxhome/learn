@@ -1,9 +1,9 @@
-package com.crock.impl;
+package com.barn.viewholder.impl;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-public interface IHolderFactory {
+public interface IHolderDelegate {
 
     RecyclerView.ViewHolder getViewHolder(int viewType, ViewGroup parent);
 

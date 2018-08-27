@@ -33,15 +33,9 @@ public class DataBindingActivity extends Activity {
                 Log.i("databinding activity","xx");
             }
         });
+
         mRootBinding = DataBindingUtil.setContentView(this, R.layout.activity_data_binding);
         mRootBinding.setData(mDataBindingVM = new DataBindingVM(getWindow(),mRootBinding.textview1));
-
-        mRootBinding.textview1.post(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
 
         Log.e("bad ", "onCreate: ", new Throwable());
 

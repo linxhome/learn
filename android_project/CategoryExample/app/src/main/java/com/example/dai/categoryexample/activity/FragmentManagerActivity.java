@@ -65,7 +65,7 @@ public class FragmentManagerActivity extends FragmentActivity {
         add("Canvas draw bitmap", new CanvasFragment());
         add("Storage", new StoreageFragment());
         add("Drawable Example", new DrawableFragment());
-        add("NestScroll Example", new NestScrollFragment());
+//        add("NestScroll Example", new NestScrollFragment());
         add("Coordinate Example", new CoordinateFragment());
         add("Activity Launch Mode Example", LaunchModeFragment.newInstance("start", "no"));
         add("Multi Feed Type", MultiFeedTypeFragment.newInstance(1));

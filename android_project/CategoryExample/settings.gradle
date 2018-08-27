@@ -1,1 +1,1 @@
-include ':app', ':crock-android'
+include ':app', ':view-holder-barn'

@@ -3,10 +3,13 @@ package com.example.dai.categoryexample.fragment.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.crock.impl.IHolderFactory;
-import com.crock.impl.annotation.InjectHolder;
-import com.crock.impl.HolderUtils;
+import com.barn.viewholder.annotation.BindHolder;
+import com.barn.viewholder.impl.IHolderDelegate;
+import com.barn.viewholder.impl.HolderUtils;
 import com.example.dai.categoryexample.fragment.dummy.DummyContent;
+import com.example.dai.categoryexample.fragment.viewholder.TypeOneViewHolder;
+import com.example.dai.categoryexample.fragment.viewholder.TypeThreeViewHolder;
+import com.example.dai.categoryexample.fragment.viewholder.TypeTwoViewHolder;
 
 import java.util.List;
 
@@ -15,18 +18,21 @@ public class TestMultiRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     List<DummyContent.DummyItem> mValue;
 
-    IHolderFactory viewHolderFactory;
+    IHolderDelegate viewHolderFactory;
 
-    @InjectHolder(item_type = 1)
+    @BindHolder(item_type = 1)
     TypeOneViewHolder typeOneViewHolder = new TypeOneViewHolder();
 
-    @InjectHolder(item_type = 2)
+    @BindHolder(item_type = 2)
     TypeTwoViewHolder typeTwoViewHolder = new TypeTwoViewHolder();
+
+    @BindHolder(item_type = 3)
+    TypeThreeViewHolder typeThreeViewView = new TypeThreeViewHolder();
 
 
     public TestMultiRecyclerAdapter(List<DummyContent.DummyItem> mValue) {
         this.mValue = mValue;
-        viewHolderFactory = HolderUtils.createHolderFactory(this);
+        viewHolderFactory = HolderUtils.createHolderDelegate(this);
     }
 
     @Override
@@ -46,6 +52,6 @@ public class TestMultiRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemViewType(int position) {
-        return (position % 3 == 0) ? 1 : 2;
+        return mValue.get(position).getType();
     }
 }
